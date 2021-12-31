@@ -2,13 +2,31 @@
     x:Class="SuckAssRSSReader.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:RSSReaderAttempt2"
+    xmlns:local="using:SuckAssRSSReader"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <CommandBar OverflowButtonVisibility="Collapsed" IsDynamicOverflowEnabled="False">
+            <AppBarButton Icon="Setting" Label="Setting" LabelPosition="Collapsed"/>
+            <CommandBar.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <AppBarButton Icon="Back" Label="Back" LabelPosition="Collapsed"/>
+                    <AppBarButton Icon="Save" Label="Save" LabelPosition="Collapsed" Grid.Column="1"/>
+                </Grid>
+            </CommandBar.Content>
+        </CommandBar>
+        <Frame x:Name="frame" Grid.Row="1"/>
     </Grid>
 </Page>
