@@ -7,10 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    NavigationCacheMode="Required">
 
     <Grid>
-        <ListView x:Name="listView" Grid.Row="2" Margin="16,12,0,0" IsDoubleTapEnabled="True" DoubleTapped="ListDoubleTapped">
+        <ListView x:Name="listView" Grid.Row="2" Margin="16,12,0,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:CustomFeed">
                     <Grid>

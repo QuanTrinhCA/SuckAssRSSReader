@@ -23,22 +23,44 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class HomePageContent : Page
     {
-        internal static event EventHandler<object> NavigateToWebView;
+        internal static event EventHandler<object> ListView_DoubleTappedEvent;
+        internal static event EventHandler<object> ListView_SelectionChangedEvent;
+        private static ObservableCollection<CustomFeed> _feeds;
+        private static ObservableCollection<CustomFeed> Feeds => _feeds;
         public HomePageContent()
         {
             InitializeComponent();
-            Loading += HomeTabContentLoading;
+            Loading += HomePageContent_ContentLoading;
+            Unloaded += HomePageContent_Unloaded;
+            MainPage.OpenLinkInBrowserEvent += OpenLinkInBrowser;
         }
-        private static ObservableCollection<CustomFeed> _feeds;
-        private static ObservableCollection<CustomFeed> Feeds => _feeds;
-        private async void HomeTabContentLoading(FrameworkElement sender, object args)
+        private async void HomePageContent_ContentLoading(FrameworkElement sender, object args)
         {
             _feeds = await SuckAssReader.GetFeeds();
             listView.ItemsSource = Feeds;
         }
-        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        private void HomePageContent_Unloaded(object sender, RoutedEventArgs e)
         {
-            NavigateToWebView(this, listView.SelectedItem);
+            MainPage.OpenLinkInBrowserEvent -= OpenLinkInBrowser;
+        }
+        private void ListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            ListView_DoubleTappedEvent(this, listView.SelectedItem);
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView_SelectionChangedEvent(this, listView.SelectedItem);
+        }
+        private async void OpenLinkInBrowser(object sender, object e)
+        {
+            if (GetType() == e as Type)
+            {
+                if (!await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeed).Link)))
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeed).Link));
+                }
+            }
         }
     }
 }

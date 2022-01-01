@@ -22,14 +22,22 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class WebViewPageContent : Page
     {
-        internal static event EventHandler<object> WebViewCanNotGoBack;
+        internal static event EventHandler<object> WebView_CanNotGoBackEvent;
+
         public WebViewPageContent()
         {
             InitializeComponent();
-            MainPage.WebViewGoBack += WebViewGoBack;
+            Unloaded += WebViewPage_ContentUnloaded;
+            MainPage.WebView_GoBackEvent += WebView_GoBack;
+            MainPage.OpenLinkInBrowserEvent += OpenLinkInBrowser;
         }
 
-        private void WebViewGoBack(object sender, object e)
+        private void WebViewPage_ContentUnloaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.WebView_GoBackEvent -= WebView_GoBack;
+            MainPage.OpenLinkInBrowserEvent -= OpenLinkInBrowser;
+        }
+        private void WebView_GoBack(object sender, object e)
         {
             if (webView.CanGoBack)
             {
@@ -37,14 +45,23 @@ namespace SuckAssRSSReader
             }
             else
             {
-                WebViewCanNotGoBack(this, null);
-                MainPage.WebViewGoBack -= WebViewGoBack;
+                WebView_CanNotGoBackEvent(this, null);
             }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             webView.Navigate(new Uri((e.Parameter as CustomFeed).Link));
+        }
+        private async void OpenLinkInBrowser(object sender, object e)
+        {
+            if (GetType() == e as Type)
+            {
+                if (!await Windows.System.Launcher.LaunchUriAsync(webView.Source))
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(webView.Source);
+                }
+            }
         }
     }
 }

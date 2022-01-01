@@ -22,8 +22,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <AppBarButton x:Name="backButton" Icon="Back" Label="Back" LabelPosition="Collapsed" Click="BackButtonClick"/>
-                    <AppBarButton x:Name="saveButton" Icon="Save" Label="Save" LabelPosition="Collapsed" Grid.Column="1"/>
+                    <AppBarButton x:Name="backButton" Icon="Back" Label="Back" LabelPosition="Collapsed" Click="BackButton_Click"/>
+                    <AppBarButton x:Name="openButton" Icon="NewWindow" Label="Open With Default Browser" LabelPosition="Collapsed" Grid.Column="1" Click="OpenButton_Click"/>
                 </Grid>
             </CommandBar.Content>
         </CommandBar>
