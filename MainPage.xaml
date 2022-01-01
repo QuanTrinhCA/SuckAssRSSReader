@@ -15,15 +15,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <CommandBar OverflowButtonVisibility="Collapsed" IsDynamicOverflowEnabled="False">
-            <AppBarButton Icon="Setting" Label="Setting" LabelPosition="Collapsed"/>
+            <AppBarButton x:Name="settingButton" Icon="Setting" Label="Setting" LabelPosition="Collapsed"/>
             <CommandBar.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <AppBarButton Icon="Back" Label="Back" LabelPosition="Collapsed"/>
-                    <AppBarButton Icon="Save" Label="Save" LabelPosition="Collapsed" Grid.Column="1"/>
+                    <AppBarButton x:Name="backButton" Icon="Back" Label="Back" LabelPosition="Collapsed"/>
+                    <AppBarButton x:Name="saveButton" Icon="Save" Label="Save" LabelPosition="Collapsed" Grid.Column="1"/>
                 </Grid>
             </CommandBar.Content>
         </CommandBar>

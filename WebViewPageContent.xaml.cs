@@ -13,32 +13,23 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace SuckAssRSSReader
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class WebViewPageContent : Page
     {
-        public MainPage()
+        public WebViewPageContent()
         {
             InitializeComponent();
-            HomePageContent.NavigateToWebView += NavigateToWebView;
-            NavigateToHome();
+            
         }
-
-        private void NavigateToWebView(object sender, object e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            frame.Navigate(typeof(WebViewPageContent), e);
-            backButton.IsEnabled = true;
-        }
-
-        internal void NavigateToHome()
-        {
-            frame.Navigate(typeof(HomePageContent));
-            backButton.IsEnabled = false;
+            webView.Navigate(new Uri((e.Parameter as CustomFeed).Link));
         }
     }
 }
