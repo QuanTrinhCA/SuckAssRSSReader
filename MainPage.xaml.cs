@@ -22,23 +22,35 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        internal static event EventHandler<object> WebViewGoBack;
         public MainPage()
         {
             InitializeComponent();
             HomePageContent.NavigateToWebView += NavigateToWebView;
+            WebViewPageContent.WebViewCanNotGoBack += GoBackToHome;
             NavigateToHome();
         }
 
         private void NavigateToWebView(object sender, object e)
         {
-            frame.Navigate(typeof(WebViewPageContent), e);
             backButton.IsEnabled = true;
+            frame.Navigate(typeof(WebViewPageContent), e);
         }
 
-        internal void NavigateToHome()
+        private void NavigateToHome()
         {
-            frame.Navigate(typeof(HomePageContent));
             backButton.IsEnabled = false;
+            frame.Navigate(typeof(HomePageContent));
+        }
+
+        private void BackButtonClick(object sender, RoutedEventArgs e)
+        {
+            WebViewGoBack(this, null);
+        }
+        private void GoBackToHome(object sender, object e)
+        {
+            backButton.IsEnabled = false;
+            frame.GoBack();
         }
     }
 }

@@ -22,11 +22,26 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class WebViewPageContent : Page
     {
+        internal static event EventHandler<object> WebViewCanNotGoBack;
         public WebViewPageContent()
         {
             InitializeComponent();
-            
+            MainPage.WebViewGoBack += WebViewGoBack;
         }
+
+        private void WebViewGoBack(object sender, object e)
+        {
+            if (webView.CanGoBack)
+            {
+                webView.GoBack();
+            }
+            else
+            {
+                WebViewCanNotGoBack(this, null);
+                MainPage.WebViewGoBack -= WebViewGoBack;
+            }
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             webView.Navigate(new Uri((e.Parameter as CustomFeed).Link));

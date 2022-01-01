@@ -23,14 +23,14 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class HomePageContent : Page
     {
-        public static event EventHandler<object> NavigateToWebView;
+        internal static event EventHandler<object> NavigateToWebView;
         public HomePageContent()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Loading += HomeTabContentLoading;
         }
         private static ObservableCollection<CustomFeed> _feeds;
-        internal static ObservableCollection<CustomFeed> Feeds => _feeds;
+        private static ObservableCollection<CustomFeed> Feeds => _feeds;
         private async void HomeTabContentLoading(FrameworkElement sender, object args)
         {
             _feeds = await SuckAssReader.GetFeeds();

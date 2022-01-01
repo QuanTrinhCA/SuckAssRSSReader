@@ -22,7 +22,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <AppBarButton x:Name="backButton" Icon="Back" Label="Back" LabelPosition="Collapsed"/>
+                    <AppBarButton x:Name="backButton" Icon="Back" Label="Back" LabelPosition="Collapsed" Click="BackButtonClick"/>
                     <AppBarButton x:Name="saveButton" Icon="Save" Label="Save" LabelPosition="Collapsed" Grid.Column="1"/>
                 </Grid>
             </CommandBar.Content>
