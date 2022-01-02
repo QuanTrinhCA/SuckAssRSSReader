@@ -8,49 +8,62 @@ using System.Threading.Tasks;
 
 namespace SuckAssRSSReader
 {
-    internal class CustomFeed
+    public class CustomFeed
     {
-        internal string Publisher;
-        internal string ImageLink;
-        internal string Link;
-        internal string Title;
-        internal DateTime PublishingDate;
-        internal string PublishingDateString;
-        internal ICollection<string> Categories;
+        public string Publisher;
+        public string ImageLink;
+        public string Link;
+        public string Title;
+        public DateTime PublishingDate;
+        public string PublishingDateString;
+        public ICollection<string> Categories;
     }
-    internal class SuckAssReader
+    public class SuckAssReader
     {
-        internal static ObservableCollection<CustomFeed> CustomFeeds;
-        internal static async Task<ObservableCollection<CustomFeed>> GetFeeds()
+        private static ObservableCollection<CustomFeed> oldFeeds = new ObservableCollection<CustomFeed>();
+        public static async Task<ObservableCollection<CustomFeed>> GetFeeds()
         {
-            var _feed = await FeedReader.ReadAsync("https://9to5mac.com/feed");
-            var _customfeeds = new ObservableCollection<CustomFeed>();
-            _feed.Items = _feed.Items.OrderByDescending(x => x.PublishingDate).ToList();
+            var _feed = await FeedReader.ReadAsync("https://lorem-rss.herokuapp.com/feed?unit=second&interval=3");
+            ObservableCollection<CustomFeed> newFeeds = new ObservableCollection<CustomFeed>();
             foreach (var item in _feed.Items)
             {
-                var _doc = new HtmlDocument();
-                _doc.LoadHtml(item.Description);
-                var _descriptionImage = _doc.DocumentNode.SelectSingleNode("//img[1]").Attributes["src"].Value;
-                var _imageUri = "ms-appx:///Assets/Placeholder.png";
-                if (_descriptionImage != null)
+                if (oldFeeds.Where(x => x.Link == item.Link).Count() == 0)
                 {
-                    _imageUri = _descriptionImage;
-                } else if (_feed.ImageUrl != null)
-                {
-                    _imageUri = _feed.ImageUrl;
+                    var _doc = new HtmlDocument();
+                    _doc.LoadHtml(item.Description);
+                    var _imageUri = "ms-appx:///Assets/Placeholder.png";
+                    if (_doc.DocumentNode.SelectSingleNode("//img[1]") != null)
+                    {
+                        _imageUri = _doc.DocumentNode.SelectSingleNode("//img[1]").Attributes["src"].Value;
+                    }
+                    else if (_feed.ImageUrl != null)
+                    {
+                        _imageUri = _feed.ImageUrl;
+                    }
+                    oldFeeds.Insert(0, new CustomFeed()
+                    {
+                        Publisher = _feed.Title,
+                        ImageLink = _imageUri,
+                        Title = item.Title,
+                        Link = item.Link,
+                        PublishingDate = item.PublishingDate.Value,
+                        PublishingDateString = item.PublishingDate.Value.Date.ToLocalTime().ToLongDateString(),
+                        Categories = item.Categories
+                    });
+                    newFeeds.Insert(0, new CustomFeed()
+                    {
+                        Publisher = _feed.Title,
+                        ImageLink = _imageUri,
+                        Title = item.Title,
+                        Link = item.Link,
+                        PublishingDate = item.PublishingDate.Value,
+                        PublishingDateString = item.PublishingDate.Value.Date.ToLocalTime().ToLongDateString(),
+                        Categories = item.Categories
+                    });
                 }
-                _customfeeds.Add(new CustomFeed()
-                {
-                    Publisher = _feed.Title,
-                    ImageLink = _imageUri,
-                    Title = item.Title,
-                    Link = item.Link,
-                    PublishingDate = item.PublishingDate.Value,
-                    PublishingDateString = item.PublishingDate.Value.Date.ToLocalTime().ToLongDateString(),
-                    Categories = item.Categories
-                });
             }
-            return _customfeeds;
+            //feeds = feeds.OrderByDescending(x => x.PublishingDate).ToList();
+            return newFeeds;
         }
     }
 }

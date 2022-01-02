@@ -22,8 +22,8 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        internal static event EventHandler<object> WebView_GoBackEvent;
-        internal static event EventHandler<object> OpenLinkInBrowserEvent;
+        public static event EventHandler<object> WebView_GoBackEvent;
+        public static event EventHandler<object> OpenLinkInBrowserEvent;
         public MainPage()
         {
             InitializeComponent();
@@ -48,7 +48,7 @@ namespace SuckAssRSSReader
         private void GoBackToHome(object sender, object e)
         {
             backButton.IsEnabled = false;
-            openButton.IsEnabled = false;
+            openButton.IsEnabled = true;
             frame.GoBack();
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)

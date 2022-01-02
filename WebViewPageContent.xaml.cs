@@ -22,7 +22,7 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class WebViewPageContent : Page
     {
-        internal static event EventHandler<object> WebView_CanNotGoBackEvent;
+        public static event EventHandler<object> WebView_CanNotGoBackEvent;
 
         public WebViewPageContent()
         {
