@@ -20,40 +20,30 @@ namespace SuckAssRSSReader
     }
     public class SuckAssReader
     {
-        private static ObservableCollection<CustomFeed> oldFeeds = new ObservableCollection<CustomFeed>();
-        public static async Task<ObservableCollection<CustomFeed>> GetFeeds()
+        public static async Task<ObservableCollection<CustomFeed>> GetFeeds(ObservableCollection<CustomFeed> oldFeeds)
         {
-            var _feed = await FeedReader.ReadAsync("https://lorem-rss.herokuapp.com/feed?unit=second&interval=3");
-            ObservableCollection<CustomFeed> newFeeds = new ObservableCollection<CustomFeed>();
-            foreach (var item in _feed.Items)
+            var feed = await FeedReader.ReadAsync("https://lorem-rss.herokuapp.com/feed?unit=second&interval=3");
+            var newFeeds = new ObservableCollection<CustomFeed>();
+            var tempFeedCollection = new List<CustomFeed>();
+            foreach (FeedItem item in feed.Items)
             {
                 if (oldFeeds.Where(x => x.Link == item.Link).Count() == 0)
                 {
-                    var _doc = new HtmlDocument();
-                    _doc.LoadHtml(item.Description);
-                    var _imageUri = "ms-appx:///Assets/Placeholder.png";
-                    if (_doc.DocumentNode.SelectSingleNode("//img[1]") != null)
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(item.Description);
+                    var imageUri = "ms-appx:///Assets/Placeholder.png";
+                    if (doc.DocumentNode.SelectSingleNode("//img[1]") != null)
                     {
-                        _imageUri = _doc.DocumentNode.SelectSingleNode("//img[1]").Attributes["src"].Value;
+                        imageUri = doc.DocumentNode.SelectSingleNode("//img[1]").Attributes["src"].Value;
                     }
-                    else if (_feed.ImageUrl != null)
+                    else if (feed.ImageUrl != null)
                     {
-                        _imageUri = _feed.ImageUrl;
+                        imageUri = feed.ImageUrl;
                     }
-                    oldFeeds.Insert(0, new CustomFeed()
+                    tempFeedCollection.Add(new CustomFeed()
                     {
-                        Publisher = _feed.Title,
-                        ImageLink = _imageUri,
-                        Title = item.Title,
-                        Link = item.Link,
-                        PublishingDate = item.PublishingDate.Value,
-                        PublishingDateString = item.PublishingDate.Value.Date.ToLocalTime().ToLongDateString(),
-                        Categories = item.Categories
-                    });
-                    newFeeds.Insert(0, new CustomFeed()
-                    {
-                        Publisher = _feed.Title,
-                        ImageLink = _imageUri,
+                        Publisher = feed.Title,
+                        ImageLink = imageUri,
                         Title = item.Title,
                         Link = item.Link,
                         PublishingDate = item.PublishingDate.Value,
@@ -62,7 +52,11 @@ namespace SuckAssRSSReader
                     });
                 }
             }
-            //feeds = feeds.OrderByDescending(x => x.PublishingDate).ToList();
+            tempFeedCollection = tempFeedCollection.OrderByDescending(x => x.PublishingDate).ToList();
+            foreach (CustomFeed item in tempFeedCollection)
+            {
+                newFeeds.Insert(0, item);
+            }
             return newFeeds;
         }
     }

@@ -12,7 +12,7 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class WebViewPageContent : Page
     {
-        public static event EventHandler<object> WebView_CanNotGoBackEvent;
+        public static event EventHandler WebView_CanNotGoBackEvent;
 
         public WebViewPageContent()
         {
@@ -38,7 +38,6 @@ namespace SuckAssRSSReader
                 WebView_CanNotGoBackEvent(this, null);
             }
         }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             webView.Navigate(new Uri((e.Parameter as CustomFeed).Link));

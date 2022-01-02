@@ -17,45 +17,42 @@ namespace SuckAssRSSReader
     {
         public static event EventHandler<object> ListView_DoubleTappedEvent;
         public static event EventHandler<object> ListView_SelectionChangedEvent;
-        private static event EventHandler<object> GetFeeds;
-        private static Timer Timer;
+        private static event EventHandler GetFeedsEvent;
+        private Timer _timer;
         public ObservableCollection<CustomFeed> Feeds = new ObservableCollection<CustomFeed>();
         public HomePageContent()
         {
             InitializeComponent();
-            //listView.ItemsSource = Feeds;
-            SetTimer();
-            Loading += HomePageContent_ContentLoading;
+
             Unloaded += HomePageContent_Unloaded;
-            GetFeeds += HomePageContent_GetFeeds;
+            GetFeedsEvent += HomePageContent_GetFeedsEvent;
             MainPage.OpenLinkInBrowserEvent += OpenLinkInBrowser;
+
+            GetFeedsEvent(this, null);
+            SetTimer();
         }
-        private async void HomePageContent_GetFeeds(object sender, object e)
+        private async void HomePageContent_GetFeedsEvent(object sender, object e)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                foreach (var item in await SuckAssReader.GetFeeds())
+                foreach (var item in await SuckAssReader.GetFeeds(Feeds))
                 {
                     Feeds.Insert(0, item);
                 }
             });
         }
-        private static void SetTimer()
+        private void SetTimer()
         {
             // Create a timer with a two second interval.
-            Timer = new Timer(10000);
+            _timer = new Timer(10000);
             // Hook up the Elapsed event for the timer. 
-            Timer.Elapsed += OnTimedEvent;
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
+            _timer.Elapsed += Timer_OnTimedEvent;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
         }
-        private static void OnTimedEvent(object sender, ElapsedEventArgs e)
+        private static void Timer_OnTimedEvent(object sender, ElapsedEventArgs e)
         {
-            GetFeeds(null, null);
-        }
-        private void HomePageContent_ContentLoading(FrameworkElement sender, object args)
-        {
-            GetFeeds(null, null);
+            GetFeedsEvent(sender, null);
         }
         private void HomePageContent_Unloaded(object sender, RoutedEventArgs e)
         {

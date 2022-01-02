@@ -11,7 +11,7 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public static event EventHandler<object> WebView_GoBackEvent;
+        public static event EventHandler WebView_GoBackEvent;
         public static event EventHandler<object> OpenLinkInBrowserEvent;
         public MainPage()
         {
