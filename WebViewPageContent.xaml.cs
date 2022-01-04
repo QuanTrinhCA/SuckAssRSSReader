@@ -40,7 +40,7 @@ namespace SuckAssRSSReader
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            webView.Navigate(new Uri((e.Parameter as CustomFeed).Link));
+            webView.Navigate(new Uri((e.Parameter as CustomFeedItem).Link));
         }
         private async void OpenLinkInBrowser(object sender, object e)
         {

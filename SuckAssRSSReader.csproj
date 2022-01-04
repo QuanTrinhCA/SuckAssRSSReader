@@ -116,8 +116,14 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AddFeedDialogContent.xaml.cs">
+      <DependentUpon>AddFeedDialogContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingPageContent.xaml.cs">
+      <DependentUpon>SettingPageContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="WebViewPageContent.xaml.cs">
       <DependentUpon>WebViewPageContent.xaml</DependentUpon>
@@ -152,6 +158,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AddFeedDialogContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingPageContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WebViewPageContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

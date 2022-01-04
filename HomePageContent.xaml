@@ -13,7 +13,7 @@
     <Grid>
         <ListView x:Name="listView" Grid.Row="2" Margin="16,12,0,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged" ItemsSource="{x:Bind Feeds}">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:CustomFeed">
+                <DataTemplate x:DataType="local:CustomFeedItem">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

@@ -19,12 +19,11 @@ namespace SuckAssRSSReader
         public static event EventHandler<object> ListView_SelectionChangedEvent;
         private static event EventHandler GetFeedsEvent;
         private Timer _timer;
-        public ObservableCollection<CustomFeed> Feeds = new ObservableCollection<CustomFeed>();
+        public ObservableCollection<CustomFeedItem> Feeds = new ObservableCollection<CustomFeedItem>();
         public HomePageContent()
         {
             InitializeComponent();
 
-            Unloaded += HomePageContent_Unloaded;
             GetFeedsEvent += HomePageContent_GetFeedsEvent;
             MainPage.OpenLinkInBrowserEvent += OpenLinkInBrowser;
 
@@ -35,7 +34,7 @@ namespace SuckAssRSSReader
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                foreach (var item in await SuckAssReader.GetFeeds(Feeds))
+                foreach (var item in await SuckAssReader.GetFeedItems(Feeds))
                 {
                     Feeds.Insert(0, item);
                 }
@@ -54,10 +53,6 @@ namespace SuckAssRSSReader
         {
             GetFeedsEvent(sender, null);
         }
-        private void HomePageContent_Unloaded(object sender, RoutedEventArgs e)
-        {
-            MainPage.OpenLinkInBrowserEvent -= OpenLinkInBrowser;
-        }
         private void ListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             ListView_DoubleTappedEvent(this, listView.SelectedItem);
@@ -71,9 +66,9 @@ namespace SuckAssRSSReader
         {
             if (GetType() == e as Type)
             {
-                if (!await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeed).Link)))
+                if (!await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link)))
                 {
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeed).Link));
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link));
                 }
             }
         }
