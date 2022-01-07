@@ -78,10 +78,9 @@ namespace SuckAssRSSReader
                 i++;
             }
         }
-        public static async Task<ObservableCollection<CustomFeedItem>> GetFeedItems(ObservableCollection<CustomFeedItem> oldFeedItems)
+        public static async Task<List<CustomFeedItem>> GetFeedItems(List<CustomFeedItem> oldFeedItems)
         {
-            var tempFeedItemCollection = new List<CustomFeedItem>();
-            var newFeedItems = new ObservableCollection<CustomFeedItem>();
+            var newFeedItems = new List<CustomFeedItem>();
             foreach (CustomFeed savedFeed in s_feeds)
             {
                 var feed = await FeedReader.ReadAsync(savedFeed.Link);
@@ -104,7 +103,7 @@ namespace SuckAssRSSReader
                         {
                             imageLink = "ms-appx:///Assets/Placeholder.png";
                         }
-                        tempFeedItemCollection.Add(new CustomFeedItem()
+                        newFeedItems.Add(new CustomFeedItem()
                         {
                             Publisher = feed.Title,
                             ImageLink = imageLink,
@@ -117,11 +116,7 @@ namespace SuckAssRSSReader
                     }
                 }
             }
-            tempFeedItemCollection = tempFeedItemCollection.OrderByDescending(x => x.PublishingDate).ToList();
-            foreach (CustomFeedItem feedItem in tempFeedItemCollection)
-            {
-                newFeedItems.Insert(0, feedItem);
-            }
+            newFeedItems = newFeedItems.OrderByDescending(x => x.PublishingDate).ToList();
             return newFeedItems;
         }
         public static async Task<CustomFeed> GetFeed(string inputUrl)

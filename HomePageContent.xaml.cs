@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Timers;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -34,7 +35,7 @@ namespace SuckAssRSSReader
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                foreach (var item in await SuckAssReader.GetFeedItems(Feeds))
+                foreach (var item in await SuckAssReader.GetFeedItems(Feeds.ToList()))
                 {
                     Feeds.Insert(0, item);
                 }
