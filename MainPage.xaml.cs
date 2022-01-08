@@ -41,12 +41,14 @@ namespace SuckAssRSSReader
         }
         private void NavigateToHome()
         {
-            
             frame.Navigate(typeof(HomePageContent));
         }
         private void NavigateToSetting(object sender, RoutedEventArgs e)
         {
-            frame.Navigate(typeof(SettingPageContent));
+            if (frame.Content.GetType() != typeof(SettingPageContent))
+            {
+                frame.Navigate(typeof(SettingPageContent));
+            }
         }
         private void FrameGoBack(object sender, object e)
         {
