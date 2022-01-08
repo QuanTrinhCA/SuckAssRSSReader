@@ -13,16 +13,26 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class SettingPageContent : Page
     {
+        public static event EventHandler<bool> ChangeStateOfOpenButton;
+        public static event EventHandler<bool> ChangeStateOfBackButton;
+
         public ObservableCollection<CustomFeed> Feeds = new ObservableCollection<CustomFeed>();
         public SettingPageContent()
         {
             InitializeComponent();
-            Updatefeeds();
+
+            Loaded += SettingPageContent_Loaded;
             removeButton.Click += RemoveFeed;
             addButton.Click += LauchAddFeedDialog;
             acceptButton.Click += SaveFeeds;
-        }
 
+            UpdateFeeds();
+        }
+        private void SettingPageContent_Loaded(object sender, RoutedEventArgs e)
+        {
+            ChangeStateOfBackButton(this, true);
+            ChangeStateOfOpenButton(this, false);
+        }
         private void RemoveFeed(object sender, RoutedEventArgs e)
         {
             if (listView.SelectedItem != null)
@@ -30,13 +40,11 @@ namespace SuckAssRSSReader
                 Feeds.Remove(listView.SelectedItem as CustomFeed);
             }
         }
-
         private void SaveFeeds(object sender, RoutedEventArgs e)
         {
             SuckAssReader.SaveFeeds(Feeds);
         }
-
-        private void Updatefeeds()
+        private void UpdateFeeds()
         {
             foreach (CustomFeed feed in SuckAssReader.GetSavedFeeds())
             {

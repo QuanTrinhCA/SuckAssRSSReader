@@ -11,57 +11,52 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public static event EventHandler WebView_GoBackEvent;
-        public static event EventHandler<object> OpenLinkInBrowserEvent;
+        public static event EventHandler GoBack;
+        public static event EventHandler<object> OpenLinkInBrowser;
         public MainPage()
         {
             InitializeComponent();
             SuckAssReader.Initialize();
-            HomePageContent.ListView_DoubleTappedEvent += NavigateToWebView;
-            HomePageContent.ListView_SelectionChangedEvent += EnableOpenButtonOnSelectionChangedEvent;
-            WebViewPageContent.WebView_CanNotGoBackEvent += FrameGoBack;
+
+            HomePageContent.ListViewDoubleTapped += NavigateToWebView;
+            HomePageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
+            HomePageContent.ChangeStateOfBackButton += ChangeStateOfBackButton;
+
+            WebViewPageContent.CanNotGoBack += FrameGoBack;
+            WebViewPageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
+            WebViewPageContent.ChangeStateOfBackButton += ChangeStateOfBackButton;
+
+            SettingPageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
+            SettingPageContent.ChangeStateOfBackButton += ChangeStateOfBackButton;
+
             backButton.Click += FireGoBackEvent;
             openButton.Click += FireOpenLinkInBrowserEvent;
             settingButton.Click += NavigateToSetting;
+
             NavigateToHome();
         }
         private void NavigateToWebView(object sender, object e)
         {
-            backButton.IsEnabled = true;
-            openButton.IsEnabled = true;
             frame.Navigate(typeof(WebViewPageContent), e);
         }
         private void NavigateToHome()
         {
-            backButton.IsEnabled = false;
-            openButton.IsEnabled = false;
+            
             frame.Navigate(typeof(HomePageContent));
         }
         private void NavigateToSetting(object sender, RoutedEventArgs e)
         {
-            backButton.IsEnabled = true;
-            openButton.IsEnabled = false;
             frame.Navigate(typeof(SettingPageContent));
         }
         private void FrameGoBack(object sender, object e)
         {
             frame.GoBack();
-            if (frame.Content.GetType() == typeof(WebViewPageContent))
-            {
-                backButton.IsEnabled = true;
-                openButton.IsEnabled = true;
-            }
-            else if (frame.Content.GetType() == typeof(HomePageContent))
-            {
-                backButton.IsEnabled = false;
-                openButton.IsEnabled = true;
-            }
         }
         private void FireGoBackEvent(object sender, RoutedEventArgs e)
         {
             if (frame.Content.GetType() == typeof(WebViewPageContent))
             {
-                WebView_GoBackEvent(this, null);
+                GoBack(this, null);
             } 
             else if (frame.Content.GetType() == typeof(SettingPageContent))
             {
@@ -70,11 +65,22 @@ namespace SuckAssRSSReader
         }
         private void FireOpenLinkInBrowserEvent(object sender, RoutedEventArgs e)
         {
-            OpenLinkInBrowserEvent(this, frame.Content.GetType());
+            OpenLinkInBrowser(this, frame.Content.GetType());
         }
-        private void EnableOpenButtonOnSelectionChangedEvent(object sender, object e)
+        private void ChangeStateOfBackButton(object sender, bool e)
         {
-            if (e != null)
+            if (e)
+            {
+                backButton.IsEnabled = true;
+            }
+            else
+            {
+                backButton.IsEnabled = false;
+            }
+        }
+        private void ChangeStateOfOpenButton(object sender, bool e)
+        {
+            if (e)
             {
                 openButton.IsEnabled = true;
             }

@@ -12,22 +12,32 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class WebViewPageContent : Page
     {
-        public static event EventHandler WebView_CanNotGoBackEvent;
-
+        public static event EventHandler CanNotGoBack;
+        public static event EventHandler<bool> ChangeStateOfOpenButton;
+        public static event EventHandler<bool> ChangeStateOfBackButton;
         public WebViewPageContent()
         {
             InitializeComponent();
-            Unloaded += WebViewPage_ContentUnloaded;
-            MainPage.WebView_GoBackEvent += WebView_GoBack;
-            MainPage.OpenLinkInBrowserEvent += OpenLinkInBrowser;
+
+            Loaded += WebViewPageContent_Loaded;
+            Unloaded += WebView_ContentUnloaded;
+            
+            MainPage.GoBack += GoBack;
+            MainPage.OpenLinkInBrowser += OpenLinkInBrowser;   
         }
 
-        private void WebViewPage_ContentUnloaded(object sender, RoutedEventArgs e)
+        private void WebViewPageContent_Loaded(object sender, RoutedEventArgs e)
         {
-            MainPage.WebView_GoBackEvent -= WebView_GoBack;
-            MainPage.OpenLinkInBrowserEvent -= OpenLinkInBrowser;
+            ChangeStateOfBackButton(this, true);
+            ChangeStateOfOpenButton(this, true);
         }
-        private void WebView_GoBack(object sender, object e)
+
+        private void WebView_ContentUnloaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.GoBack -= GoBack;
+            MainPage.OpenLinkInBrowser -= OpenLinkInBrowser;
+        }
+        private void GoBack(object sender, object e)
         {
             if (webView.CanGoBack)
             {
@@ -35,7 +45,7 @@ namespace SuckAssRSSReader
             }
             else
             {
-                WebView_CanNotGoBackEvent(this, null);
+                CanNotGoBack(this, null);
             }
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

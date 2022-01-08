@@ -69,11 +69,13 @@ namespace SuckAssRSSReader
             int i = 0;
             foreach (var feed in s_feeds)
             {
-                var composite = new Windows.Storage.ApplicationDataCompositeValue();
-                composite["Title"] = feed.Title;
-                composite["Description"] = feed.Description;
-                composite["ImageLink"] = feed.ImageLink;
-                composite["Link"] = feed.Link;
+                var composite = new Windows.Storage.ApplicationDataCompositeValue
+                {
+                    ["Title"] = feed.Title,
+                    ["Description"] = feed.Description,
+                    ["ImageLink"] = feed.ImageLink,
+                    ["Link"] = feed.Link
+                };
                 localSettings.Containers["feeds"].Values.Add("feed" + i.ToString(), composite);
                 i++;
             }
@@ -116,7 +118,7 @@ namespace SuckAssRSSReader
                     }
                 }
             }
-            newFeedItems = newFeedItems.OrderByDescending(x => x.PublishingDate).ToList();
+            newFeedItems = newFeedItems.OrderBy(x => x.PublishingDate).ToList();
             return newFeedItems;
         }
         public static async Task<CustomFeed> GetFeed(string inputUrl)

@@ -16,28 +16,31 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class HomePageContent : Page
     {
-        public static event EventHandler<object> ListView_DoubleTappedEvent;
-        public static event EventHandler<object> ListView_SelectionChangedEvent;
-        private static event EventHandler GetFeedsEvent;
-        private Timer _timer;
+        public static event EventHandler<object> ListViewDoubleTapped;
+        public static event EventHandler<bool> ChangeStateOfOpenButton;
+        public static event EventHandler<bool> ChangeStateOfBackButton;
+
         public ObservableCollection<CustomFeedItem> Feeds = new ObservableCollection<CustomFeedItem>();
+
+        private Timer _timer;
         public HomePageContent()
         {
             InitializeComponent();
 
-            GetFeedsEvent += HomePageContent_GetFeedsEvent;
-            MainPage.OpenLinkInBrowserEvent += OpenLinkInBrowser;
+            Loaded += HomePageContent_Loaded;
 
-            GetFeedsEvent(this, null);
+            MainPage.OpenLinkInBrowser += OpenLinkInBrowser;
+
+            SyncFeeds();
             SetTimer();
         }
-        private async void HomePageContent_GetFeedsEvent(object sender, object e)
+        private async void SyncFeeds()
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                foreach (var item in await SuckAssReader.GetFeedItems(Feeds.ToList()))
+                foreach (CustomFeedItem feedItem in await SuckAssReader.GetFeedItems(Feeds.ToList()))
                 {
-                    Feeds.Insert(0, item);
+                    Feeds.Insert(0, feedItem);
                 }
             });
         }
@@ -46,22 +49,33 @@ namespace SuckAssRSSReader
             // Create a timer with a two second interval.
             _timer = new Timer(10000);
             // Hook up the Elapsed event for the timer. 
-            _timer.Elapsed += Timer_OnTimedEvent;
+            _timer.Elapsed += Timer_OnTimed;
             _timer.AutoReset = true;
             _timer.Enabled = true;
         }
-        private static void Timer_OnTimedEvent(object sender, ElapsedEventArgs e)
+        private void Timer_OnTimed(object sender, ElapsedEventArgs e)
         {
-            GetFeedsEvent(sender, null);
+            SyncFeeds();
         }
         private void ListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            ListView_DoubleTappedEvent(this, listView.SelectedItem);
+            ListViewDoubleTapped(this, listView.SelectedItem);
         }
-
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListView_SelectionChangedEvent(this, listView.SelectedItem);
+            ChangeStateOfOpenButton(this, true);
+        }
+        private void HomePageContent_Loaded(object sender, RoutedEventArgs e)
+        {
+            ChangeStateOfBackButton(this, false);
+            if (listView.SelectedItem == null)
+            {
+                ChangeStateOfOpenButton(this, false);
+            }
+            else
+            {
+                ChangeStateOfOpenButton(this, true);
+            }
         }
         private async void OpenLinkInBrowser(object sender, object e)
         {
