@@ -11,7 +11,12 @@
     NavigationCacheMode="Required">
 
     <Grid>
-        <ListView x:Name="listView" Grid.Row="2" Margin="16,12,0,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged" ItemsSource="{x:Bind Feeds}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Your feeds" Margin="16,12,0,0" Style="{ThemeResource TitleTextBlockStyle}"/>
+        <ListView x:Name="listView" Grid.Row="1" Margin="16,12,0,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged" ItemsSource="{x:Bind Feeds}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:CustomFeedItem">
                     <Grid>
