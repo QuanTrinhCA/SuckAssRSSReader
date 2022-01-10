@@ -35,48 +35,99 @@ namespace SuckAssRSSReader
         }
         private void RemoveFeed(object sender, RoutedEventArgs e)
         {
-            if (listView.SelectedItem != null)
+            var removeList = listView.SelectedItems.ToList();
+            if (removeList.Count != 0)
             {
-                Feeds.Remove(listView.SelectedItem as CustomFeed);
-            }
-        }
-        private void SaveFeeds(object sender, RoutedEventArgs e)
-        {
-            SuckAssReader.SaveFeeds(Feeds);
-        }
-        private void UpdateFeeds()
-        {
-            foreach (CustomFeed feed in SuckAssReader.GetSavedFeeds())
-            {
-                if (feed != null)
+                foreach (CustomFeed feed in removeList)
                 {
-                    Feeds.Insert(0, feed);
+                    Feeds.Remove(feed);
                 }
             }
+        }
+        private async void SaveFeeds(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SuckAssReader.SaveFeeds(Feeds);
+            }
+            catch (Exception)
+            {
+                ContentDialog savingFeedsErrorDialog = new ContentDialog
+                {
+                    Title = "Error saving changes",
+                    Content = "An error occured while saving changes, please try again",
+                    CloseButtonText = "Ok"
+                };
+                await savingFeedsErrorDialog.ShowAsync();
+            }
+            
+        }
+        private async void UpdateFeeds()
+        {
+            try
+            {
+                foreach (CustomFeed feed in SuckAssReader.GetSavedFeeds())
+                {
+                    if (feed != null)
+                    {
+                        Feeds.Insert(0, feed);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                ContentDialog gettingSavedFeedsErrorDialog = new ContentDialog
+                {
+                    Title = "Error getting saved feeds",
+                    Content = "An error occured while getting saved feeds",
+                    CloseButtonText = "Ok"
+                };
+                await gettingSavedFeedsErrorDialog.ShowAsync();
+            }
+            
         }
         //A way to get the result from the text box inside the dialog content... idk what I'm doing
         private AddFeedDialogContent dialogContent;
         private async void LauchAddFeedDialog(object sender, object e)
         {
             dialogContent = new AddFeedDialogContent();
-            var dialog = new ContentDialog
+            var addFeedDialog = new ContentDialog
             {
                 Title = "Add new feed source",
-                PrimaryButtonText = "OK",
+                PrimaryButtonText = "Ok",
                 CloseButtonText = "Cancel",
                 DefaultButton = ContentDialogButton.Primary,
                 Content = dialogContent
             };
-            dialog.PrimaryButtonClick += Dialog_PrimaryButtonClick;
-            await dialog.ShowAsync();
+            addFeedDialog.Closed += AddFeedDialog_Closed;
+            await addFeedDialog.ShowAsync();
             dialogContent = null;
         }
-        private async void Dialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void AddFeedDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            var newFeed = await SuckAssReader.GetFeed(dialogContent.GetFeedUrl());
-            if (Feeds.Where(x => x.Link == newFeed.Link).Count() == 0)
+            if (args.Result == ContentDialogResult.Primary)
             {
-                Feeds.Add(newFeed);
+                CustomFeed newFeed = new CustomFeed();
+                bool newFeedIsValid = true;
+                try
+                {
+                    newFeed = await SuckAssReader.GetFeed(dialogContent.GetFeedUrl());
+                }
+                catch (Exception)
+                {
+                    newFeedIsValid = false;
+                    ContentDialog feedUrlErrorDialog = new ContentDialog
+                    {
+                        Title = "Error adding new feed",
+                        Content = "An error occured while adding the feed, please check the URL again",
+                        CloseButtonText = "Ok"
+                    };
+                    await feedUrlErrorDialog.ShowAsync();
+                }
+                if (Feeds.Where(x => x.Link == newFeed.Link).Count() == 0 && newFeedIsValid)
+                {
+                    Feeds.Add(newFeed);
+                }
             }
         }
     }

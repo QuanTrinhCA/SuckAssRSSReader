@@ -85,36 +85,48 @@ namespace SuckAssRSSReader
             var newFeedItems = new List<CustomFeedItem>();
             foreach (CustomFeed savedFeed in s_feeds)
             {
-                var feed = await FeedReader.ReadAsync(savedFeed.Link);
-                foreach (FeedItem feedItem in feed.Items)
+                Feed feed = new Feed();
+                bool readSuccessful = true;
+                try
                 {
-                    if (oldFeedItems.Where(x => x.Link == feedItem.Link).Count() == 0)
+                    feed = await FeedReader.ReadAsync(savedFeed.Link);
+                }
+                catch (Exception)
+                {
+                    readSuccessful = false;
+                }
+                if (readSuccessful)
+                {
+                    foreach (FeedItem feedItem in feed.Items)
                     {
-                        var doc = new HtmlDocument();
-                        doc.LoadHtml(feedItem.Description);
-                        string imageLink;
-                        if (doc.DocumentNode.SelectSingleNode("//img[1]") != null)
+                        if (oldFeedItems.Where(x => x.Link == feedItem.Link).Count() == 0)
                         {
-                            imageLink = doc.DocumentNode.SelectSingleNode("//img[1]").Attributes["src"].Value;
+                            var doc = new HtmlDocument();
+                            doc.LoadHtml(feedItem.Description);
+                            string imageLink;
+                            if (doc.DocumentNode.SelectSingleNode("//img[1]") != null)
+                            {
+                                imageLink = doc.DocumentNode.SelectSingleNode("//img[1]").Attributes["src"].Value;
+                            }
+                            else if (feed.ImageUrl != null)
+                            {
+                                imageLink = feed.ImageUrl;
+                            }
+                            else
+                            {
+                                imageLink = "ms-appx:///Assets/Placeholder.png";
+                            }
+                            newFeedItems.Add(new CustomFeedItem()
+                            {
+                                Publisher = feed.Title,
+                                ImageLink = imageLink,
+                                Title = feedItem.Title,
+                                Link = feedItem.Link,
+                                PublishingDate = feedItem.PublishingDate.Value,
+                                PublishingDateString = feedItem.PublishingDate.Value.Date.ToLocalTime().ToLongDateString(),
+                                Categories = feedItem.Categories
+                            });
                         }
-                        else if (feed.ImageUrl != null)
-                        {
-                            imageLink = feed.ImageUrl;
-                        }
-                        else
-                        {
-                            imageLink = "ms-appx:///Assets/Placeholder.png";
-                        }
-                        newFeedItems.Add(new CustomFeedItem()
-                        {
-                            Publisher = feed.Title,
-                            ImageLink = imageLink,
-                            Title = feedItem.Title,
-                            Link = feedItem.Link,
-                            PublishingDate = feedItem.PublishingDate.Value,
-                            PublishingDateString = feedItem.PublishingDate.Value.Date.ToLocalTime().ToLongDateString(),
-                            Categories = feedItem.Categories
-                        });
                     }
                 }
             }
