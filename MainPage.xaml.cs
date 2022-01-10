@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AppFeedReader;
+using AppSettings;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -17,6 +19,7 @@ namespace SuckAssRSSReader
         {
             InitializeComponent();
             SuckAssReader.Initialize();
+            AppTheme.SetAppTheme(AppTheme.GetAppThemeSetting());
 
             HomePageContent.ListViewDoubleTapped += NavigateToWebView;
             HomePageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
@@ -59,7 +62,7 @@ namespace SuckAssRSSReader
             if (frame.Content.GetType() == typeof(WebViewPageContent))
             {
                 GoBack(this, null);
-            } 
+            }
             else if (frame.Content.GetType() == typeof(SettingPageContent))
             {
                 FrameGoBack(this, null);

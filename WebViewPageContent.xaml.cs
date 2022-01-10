@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AppFeedReader;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -21,9 +22,9 @@ namespace SuckAssRSSReader
 
             Loaded += WebViewPageContent_Loaded;
             Unloaded += WebView_ContentUnloaded;
-            
+
             MainPage.GoBack += GoBack;
-            MainPage.OpenLinkInBrowser += OpenLinkInBrowser;   
+            MainPage.OpenLinkInBrowser += OpenLinkInBrowser;
         }
 
         private void WebViewPageContent_Loaded(object sender, RoutedEventArgs e)

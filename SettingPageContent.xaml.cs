@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AppFeedReader;
+using AppSettings;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml;
@@ -25,8 +27,30 @@ namespace SuckAssRSSReader
             removeButton.Click += RemoveFeed;
             addButton.Click += LauchAddFeedDialog;
             acceptButton.Click += SaveFeeds;
+            radioButtons.SelectionChanged += ChangeTheme;
 
             UpdateFeeds();
+            InitialUpdateOfThemeSetting();
+        }
+        private void ChangeTheme(object sender, SelectionChangedEventArgs e)
+        {
+            AppTheme.SaveAppThemeSetting(radioButtons.SelectedItem as string);
+            AppTheme.SetAppTheme(radioButtons.SelectedItem as string);
+        }
+        private void InitialUpdateOfThemeSetting()
+        {
+            switch (AppTheme.GetAppThemeSetting())
+            {
+                case "Light":
+                    radioButtons.SelectedIndex = 0;
+                    break;
+                case "Dark":
+                    radioButtons.SelectedIndex = 1;
+                    break;
+                case "Use system setting":
+                    radioButtons.SelectedIndex = 2;
+                    break;
+            }
         }
         private void SettingPageContent_Loaded(object sender, RoutedEventArgs e)
         {
@@ -60,7 +84,7 @@ namespace SuckAssRSSReader
                 };
                 await savingFeedsErrorDialog.ShowAsync();
             }
-            
+
         }
         private async void UpdateFeeds()
         {
@@ -84,7 +108,7 @@ namespace SuckAssRSSReader
                 };
                 await gettingSavedFeedsErrorDialog.ShowAsync();
             }
-            
+
         }
         //A way to get the result from the text box inside the dialog content... idk what I'm doing
         private AddFeedDialogContent dialogContent;
