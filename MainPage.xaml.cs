@@ -2,6 +2,8 @@
 using AppSettings;
 using System;
 using Windows.ApplicationModel.Core;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -18,14 +20,15 @@ namespace SuckAssRSSReader
         public static event EventHandler<object> OpenLinkInBrowser;
         public MainPage()
         {
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            CoreApplication.GetCurrentView().TitleBar.LayoutMetricsChanged += TitleBar_LayoutMetricsChanged;
 
             InitializeComponent();
 
             SuckAssReader.Initialize();
 
             AppTheme.SetAppTheme(AppTheme.GetAppThemeSetting());
-            (Window.Current.Content as FrameworkElement).ActualThemeChanged += ResetAppTheme;
+            AppTheme.SetTitleBarTheme(Window.Current.Content as FrameworkElement, null);
 
             HomePageContent.ListViewDoubleTapped += NavigateToWebView;
             HomePageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
@@ -44,12 +47,9 @@ namespace SuckAssRSSReader
 
             NavigateToHome();
         }
-        private void ResetAppTheme(FrameworkElement sender, object e)
+        private void TitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            if ((Window.Current.Content as FrameworkElement).RequestedTheme == ElementTheme.Default)
-            {
-                AppTheme.SetAppTheme("Use system setting");
-            }
+            appTitleTextBlock.Height = sender.Height;
         }
         private void NavigateToWebView(object sender, object e)
         {
