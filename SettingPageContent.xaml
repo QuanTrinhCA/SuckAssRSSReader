@@ -9,50 +9,110 @@
     mc:Ignorable="d"
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <TextBlock Text="Setting" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource TitleTextBlockStyle}"/>
-        <TextBlock Text="Feeds" Grid.Row="1" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-        <AppBarButton x:Name="removeButton" Icon="Remove" Grid.Row="1" Grid.Column="2" LabelPosition="Collapsed" Label="Remove"/>
-        <AppBarButton x:Name="addButton" Icon="Add" Grid.Row="1" Grid.Column="3" LabelPosition="Collapsed" Label="Add"/>
-        <AppBarButton x:Name="acceptButton" Icon="Accept" Grid.Row="1" Grid.Column="4" LabelPosition="Collapsed" Label="Accept" Margin="0,0,60,0"/>
-        <ListView x:Name="listView" Margin="60,12,60,0" Grid.Row="2" Grid.ColumnSpan="5" SelectionMode="Extended" ItemsSource="{x:Bind Feeds}">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:CustomFeed">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{x:Bind ImageLink}" Width="32" Height="32"  Margin="16,12,12,16" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Title}" Margin="16,12,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
-                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind Description}" Margin="16,12,0,16" Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <TextBlock Text="Theme mode" Grid.Row="3" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-        <muxc:RadioButtons x:Name="radioButtons" Grid.Row="4" Grid.ColumnSpan="5" Margin="60,12,0,0">
-            <x:String>Light</x:String>
-            <x:String>Dark</x:String>
-            <x:String>Use system setting</x:String>
-        </muxc:RadioButtons>
-    </Grid>
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Setting" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock Text="Feeds" Grid.Row="1" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <AppBarButton x:Name="removeButton" Icon="Remove" Grid.Row="1" Grid.Column="2" LabelPosition="Collapsed" Label="Remove"/>
+            <AppBarButton x:Name="addButton" Icon="Add" Grid.Row="1" Grid.Column="3" LabelPosition="Collapsed" Label="Add"/>
+            <AppBarButton x:Name="acceptButton" Icon="Accept" Grid.Row="1" Grid.Column="4" LabelPosition="Collapsed" Label="Accept" Margin="0,0,60,0"/>
+            <ListView x:Name="listView" Margin="60,12,60,0" Grid.Row="2" Grid.ColumnSpan="5" SelectionMode="Extended" ItemsSource="{x:Bind Feeds}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:CustomFeed">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{x:Bind ImageLink}" Width="32" Height="32"  Margin="16,12,12,16" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Title}" Margin="16,12,0,0" Style="{ThemeResource BaseTextBlockStyle}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind Description}" Margin="16,12,0,16" Style="{ThemeResource BodyTextBlockStyle}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <TextBlock Text="Theme mode" Grid.Row="3" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <muxc:RadioButtons x:Name="radioButtons" Grid.Row="4" Grid.ColumnSpan="5" Margin="60,12,0,0">
+                <x:String>Light</x:String>
+                <x:String>Dark</x:String>
+                <x:String>Use system setting</x:String>
+            </muxc:RadioButtons>
+            <TextBlock Text="About" Grid.Row="5" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <RichTextBlock Grid.Row="6" Grid.ColumnSpan="5" Margin="60,12,0,0">
+                <Paragraph>
+                    This is a RSS feed reader made in uwp as a challenge I set out for myself :)
+                    <LineBreak/>
+                    <Hyperlink NavigateUri="https://github.com/QuanTrinhCA/SuckAssRSSReader">Source code</Hyperlink>
+                </Paragraph>
+            </RichTextBlock>
+            <TextBlock Text="Dependencies" Grid.Row="7" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <RichTextBlock Grid.Row="8" Grid.ColumnSpan="5" Margin="60,12,0,0">
+                <Paragraph>
+                    <Hyperlink NavigateUri="https://github.com/arminreiter/FeedReader">CodeHollow's FeedReader</Hyperlink> - Open-source C# library used to read feeds
+                    <LineBreak/>
+                    <Hyperlink NavigateUri="https://microsoft.github.io/microsoft-ui-xaml/">Microsoft's WinUI</Hyperlink> - Fluent UI framework used for GUI
+                </Paragraph>
+            </RichTextBlock>
+            <TextBlock Text="License" Grid.Row="9" Grid.ColumnSpan="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <RichTextBlock Grid.Row="10" Grid.ColumnSpan="5" Margin="60,12,60,0" >
+                <Paragraph>
+                    MIT License
+                    <LineBreak/>
+                </Paragraph>
+                <Paragraph>
+                    Copyright (c) 2022 Quan Trinh The
+                    <LineBreak/>
+                </Paragraph>
+                <Paragraph>
+                    Permission is hereby granted, free of charge, to any person obtaining a copy
+                    of this software and associated documentation files (the "Software"), to deal
+                    in the Software without restriction, including without limitation the rights
+                    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                    copies of the Software, and to permit persons to whom the Software is
+                    furnished to do so, subject to the following conditions:
+                    <LineBreak/>
+                </Paragraph>
+                <Paragraph>
+                    The above copyright notice and this permission notice shall be included in all
+                    copies or substantial portions of the Software.
+                    <LineBreak/>
+                </Paragraph>
+                <Paragraph>
+                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                    SOFTWARE.
+                    <LineBreak/>
+                </Paragraph>
+            </RichTextBlock>
+        </Grid>
+    </ScrollViewer>
 </Page>
