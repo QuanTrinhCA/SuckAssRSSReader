@@ -2,8 +2,6 @@
 using AppSettings;
 using System;
 using Windows.ApplicationModel.Core;
-using Windows.UI;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -16,8 +14,6 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public static event EventHandler GoBack;
-        public static event EventHandler<object> OpenLinkInBrowser;
         public MainPage()
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
@@ -47,44 +43,10 @@ namespace SuckAssRSSReader
 
             NavigateToHome();
         }
-        private void TitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            appTitleTextBlock.Height = sender.Height;
-        }
-        private void NavigateToWebView(object sender, object e)
-        {
-            frame.Navigate(typeof(WebViewPageContent), e);
-        }
-        private void NavigateToHome()
-        {
-            frame.Navigate(typeof(HomePageContent));
-        }
-        private void NavigateToSetting(object sender, RoutedEventArgs e)
-        {
-            if (frame.Content.GetType() != typeof(SettingPageContent))
-            {
-                frame.Navigate(typeof(SettingPageContent));
-            }
-        }
-        private void FrameGoBack(object sender, object e)
-        {
-            frame.GoBack();
-        }
-        private void FireGoBackEvent(object sender, RoutedEventArgs e)
-        {
-            if (frame.Content.GetType() == typeof(WebViewPageContent))
-            {
-                GoBack(this, null);
-            }
-            else if (frame.Content.GetType() == typeof(SettingPageContent))
-            {
-                FrameGoBack(this, null);
-            }
-        }
-        private void FireOpenLinkInBrowserEvent(object sender, RoutedEventArgs e)
-        {
-            OpenLinkInBrowser(this, frame.Content.GetType());
-        }
+
+        public static event EventHandler GoBack;
+
+        public static event EventHandler<object> OpenLinkInBrowser;
         private void ChangeStateOfBackButton(object sender, bool e)
         {
             if (e)
@@ -96,6 +58,7 @@ namespace SuckAssRSSReader
                 backButton.IsEnabled = false;
             }
         }
+
         private void ChangeStateOfOpenButton(object sender, bool e)
         {
             if (e)
@@ -106,6 +69,51 @@ namespace SuckAssRSSReader
             {
                 openButton.IsEnabled = false;
             }
+        }
+
+        private void FireGoBackEvent(object sender, RoutedEventArgs e)
+        {
+            if (frame.Content.GetType() == typeof(WebViewPageContent))
+            {
+                GoBack(this, null);
+            }
+            else if (frame.Content.GetType() == typeof(SettingPageContent))
+            {
+                FrameGoBack(this, null);
+            }
+        }
+
+        private void FireOpenLinkInBrowserEvent(object sender, RoutedEventArgs e)
+        {
+            OpenLinkInBrowser(this, frame.Content.GetType());
+        }
+
+        private void FrameGoBack(object sender, object e)
+        {
+            frame.GoBack();
+        }
+
+        private void NavigateToHome()
+        {
+            frame.Navigate(typeof(HomePageContent));
+        }
+
+        private void NavigateToSetting(object sender, RoutedEventArgs e)
+        {
+            if (frame.Content.GetType() != typeof(SettingPageContent))
+            {
+                frame.Navigate(typeof(SettingPageContent));
+            }
+        }
+
+        private void NavigateToWebView(object sender, object e)
+        {
+            frame.Navigate(typeof(WebViewPageContent), e);
+        }
+
+        private void TitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            appTitleTextBlock.Height = sender.Height;
         }
     }
 }

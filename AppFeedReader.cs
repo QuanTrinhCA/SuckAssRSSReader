@@ -10,76 +10,58 @@ namespace AppFeedReader
 {
     public class CustomFeed
     {
-        public string Title;
+        public string Description;
         public string ImageLink;
         public string Link;
-        public string Description;
+        public string Title;
     }
+
     public class CustomFeedItem
     {
-        public string Publisher;
+        public ICollection<string> Categories;
         public string ImageLink;
         public string Link;
-        public string Title;
+        public string Publisher;
         public DateTime PublishingDate;
         public string PublishingDateString;
-        public ICollection<string> Categories;
+        public string Title;
     }
+
     public class SuckAssReader
     {
         private static List<CustomFeed> s_feeds = new List<CustomFeed>();
-        public static void Initialize()
+
+        public static async Task<CustomFeed> GetFeed(string inputUrl)
         {
-            _ = GetSavedFeeds();
-        }
-        public static List<CustomFeed> GetSavedFeeds()
-        {
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.CreateContainer("feeds", Windows.Storage.ApplicationDataCreateDisposition.Always);
-            if (localSettings.Containers.ContainsKey("feeds"))
+            var urls = await FeedReader.GetFeedUrlsFromUrlAsync(inputUrl);
+            string feedUrl;
+            if (urls.Count() == 0)
             {
-                foreach (var key in localSettings.Containers["feeds"].Values.Keys)
-                {
-                    if (localSettings.Containers["feeds"].Values.ContainsKey(key))
-                    {
-                        var composite = localSettings.Containers["feeds"].Values[key] as Windows.Storage.ApplicationDataCompositeValue;
-                        var feed = new CustomFeed
-                        {
-                            Title = composite["Title"].ToString(),
-                            Description = composite["Description"].ToString(),
-                            ImageLink = composite["ImageLink"].ToString(),
-                            Link = composite["Link"].ToString()
-                        };
-                        if (s_feeds.Where(x => x.Link == feed.Link).Count() == 0)
-                        {
-                            s_feeds.Add(feed);
-                        }
-                    }
-                }
-                s_feeds = s_feeds.OrderBy(x => x.Title).ToList();
+                feedUrl = inputUrl;
             }
-            return s_feeds;
-        }
-        public static void SaveFeeds(ObservableCollection<CustomFeed> newfeeds)
-        {
-            s_feeds = newfeeds.ToList();
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.DeleteContainer("feeds");
-            localSettings.CreateContainer("feeds", Windows.Storage.ApplicationDataCreateDisposition.Always);
-            int i = 0;
-            foreach (var feed in s_feeds)
+            else
             {
-                var composite = new Windows.Storage.ApplicationDataCompositeValue
-                {
-                    ["Title"] = feed.Title,
-                    ["Description"] = feed.Description,
-                    ["ImageLink"] = feed.ImageLink,
-                    ["Link"] = feed.Link
-                };
-                localSettings.Containers["feeds"].Values.Add("feed" + i.ToString(), composite);
-                i++;
+                feedUrl = urls.First().Url;
             }
+            var feed = await FeedReader.ReadAsync(feedUrl);
+            string imageLink;
+            if (feed.ImageUrl != null)
+            {
+                imageLink = feed.ImageUrl;
+            }
+            else
+            {
+                imageLink = "ms-appx:///Assets/Placeholder.png";
+            }
+            return new CustomFeed()
+            {
+                Title = feed.Title,
+                ImageLink = imageLink,
+                Description = feed.Description,
+                Link = feedUrl
+            };
         }
+
         public static async Task<List<CustomFeedItem>> GetFeedItems(List<CustomFeedItem> oldFeedItems)
         {
             var newFeedItems = new List<CustomFeedItem>();
@@ -133,35 +115,59 @@ namespace AppFeedReader
             newFeedItems = newFeedItems.OrderBy(x => x.PublishingDate).ToList();
             return newFeedItems;
         }
-        public static async Task<CustomFeed> GetFeed(string inputUrl)
+
+        public static List<CustomFeed> GetSavedFeeds()
         {
-            var urls = await FeedReader.GetFeedUrlsFromUrlAsync(inputUrl);
-            string feedUrl;
-            if (urls.Count() == 0)
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.CreateContainer("feeds", Windows.Storage.ApplicationDataCreateDisposition.Always);
+            if (localSettings.Containers.ContainsKey("feeds"))
             {
-                feedUrl = inputUrl;
+                foreach (var key in localSettings.Containers["feeds"].Values.Keys)
+                {
+                    if (localSettings.Containers["feeds"].Values.ContainsKey(key))
+                    {
+                        var composite = localSettings.Containers["feeds"].Values[key] as Windows.Storage.ApplicationDataCompositeValue;
+                        var feed = new CustomFeed
+                        {
+                            Title = composite["Title"].ToString(),
+                            Description = composite["Description"].ToString(),
+                            ImageLink = composite["ImageLink"].ToString(),
+                            Link = composite["Link"].ToString()
+                        };
+                        if (s_feeds.Where(x => x.Link == feed.Link).Count() == 0)
+                        {
+                            s_feeds.Add(feed);
+                        }
+                    }
+                }
+                s_feeds = s_feeds.OrderBy(x => x.Title).ToList();
             }
-            else
+            return s_feeds;
+        }
+
+        public static void Initialize()
+        {
+            _ = GetSavedFeeds();
+        }
+        public static void SaveFeeds(ObservableCollection<CustomFeed> newfeeds)
+        {
+            s_feeds = newfeeds.ToList();
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.DeleteContainer("feeds");
+            localSettings.CreateContainer("feeds", Windows.Storage.ApplicationDataCreateDisposition.Always);
+            int i = 0;
+            foreach (var feed in s_feeds)
             {
-                feedUrl = urls.First().Url;
+                var composite = new Windows.Storage.ApplicationDataCompositeValue
+                {
+                    ["Title"] = feed.Title,
+                    ["Description"] = feed.Description,
+                    ["ImageLink"] = feed.ImageLink,
+                    ["Link"] = feed.Link
+                };
+                localSettings.Containers["feeds"].Values.Add("feed" + i.ToString(), composite);
+                i++;
             }
-            var feed = await FeedReader.ReadAsync(feedUrl);
-            string imageLink;
-            if (feed.ImageUrl != null)
-            {
-                imageLink = feed.ImageUrl;
-            }
-            else
-            {
-                imageLink = "ms-appx:///Assets/Placeholder.png";
-            }
-            return new CustomFeed()
-            {
-                Title = feed.Title,
-                ImageLink = imageLink,
-                Description = feed.Description,
-                Link = feedUrl
-            };
         }
     }
 }

@@ -15,10 +15,11 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class SettingPageContent : Page
     {
-        public static event EventHandler<bool> ChangeStateOfOpenButton;
-        public static event EventHandler<bool> ChangeStateOfBackButton;
-
         public ObservableCollection<CustomFeed> Feeds = new ObservableCollection<CustomFeed>();
+
+        //A way to get the result from the text box inside the dialog content... idk what I'm doing
+        private AddFeedDialogContent dialogContent;
+
         public SettingPageContent()
         {
             InitializeComponent();
@@ -32,101 +33,10 @@ namespace SuckAssRSSReader
             UpdateFeeds();
             InitialUpdateOfThemeSetting();
         }
-        private void ChangeTheme(object sender, SelectionChangedEventArgs e)
-        {
-            AppTheme.SaveAppThemeSetting(radioButtons.SelectedItem as string);
-            AppTheme.SetAppTheme(radioButtons.SelectedItem as string);
-        }
-        private void InitialUpdateOfThemeSetting()
-        {
-            switch (AppTheme.GetAppThemeSetting())
-            {
-                case "Light":
-                    radioButtons.SelectedIndex = 0;
-                    break;
-                case "Dark":
-                    radioButtons.SelectedIndex = 1;
-                    break;
-                case "Use system setting":
-                    radioButtons.SelectedIndex = 2;
-                    break;
-            }
-        }
-        private void SettingPageContent_Loaded(object sender, RoutedEventArgs e)
-        {
-            ChangeStateOfBackButton(this, true);
-            ChangeStateOfOpenButton(this, false);
-        }
-        private void RemoveFeed(object sender, RoutedEventArgs e)
-        {
-            var removeList = listView.SelectedItems.ToList();
-            if (removeList.Count != 0)
-            {
-                foreach (CustomFeed feed in removeList)
-                {
-                    Feeds.Remove(feed);
-                }
-            }
-        }
-        private async void SaveFeeds(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                SuckAssReader.SaveFeeds(Feeds);
-            }
-            catch (Exception)
-            {
-                ContentDialog savingFeedsErrorDialog = new ContentDialog
-                {
-                    Title = "Error saving changes",
-                    Content = "An error occured while saving changes, please try again",
-                    CloseButtonText = "Ok"
-                };
-                await savingFeedsErrorDialog.ShowAsync();
-            }
 
-        }
-        private async void UpdateFeeds()
-        {
-            try
-            {
-                foreach (CustomFeed feed in SuckAssReader.GetSavedFeeds())
-                {
-                    if (feed != null)
-                    {
-                        Feeds.Insert(0, feed);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                ContentDialog gettingSavedFeedsErrorDialog = new ContentDialog
-                {
-                    Title = "Error getting saved feeds",
-                    Content = "An error occured while getting saved feeds",
-                    CloseButtonText = "Ok"
-                };
-                await gettingSavedFeedsErrorDialog.ShowAsync();
-            }
+        public static event EventHandler<bool> ChangeStateOfBackButton;
 
-        }
-        //A way to get the result from the text box inside the dialog content... idk what I'm doing
-        private AddFeedDialogContent dialogContent;
-        private async void LauchAddFeedDialog(object sender, object e)
-        {
-            dialogContent = new AddFeedDialogContent();
-            var addFeedDialog = new ContentDialog
-            {
-                Title = "Add new feed source",
-                PrimaryButtonText = "Ok",
-                CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                Content = dialogContent
-            };
-            addFeedDialog.Closed += AddFeedDialog_Closed;
-            await addFeedDialog.ShowAsync();
-            dialogContent = null;
-        }
+        public static event EventHandler<bool> ChangeStateOfOpenButton;
         private async void AddFeedDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             if (args.Result == ContentDialogResult.Primary)
@@ -152,6 +62,105 @@ namespace SuckAssRSSReader
                 {
                     Feeds.Add(newFeed);
                 }
+            }
+        }
+
+        private void ChangeTheme(object sender, SelectionChangedEventArgs e)
+        {
+            AppTheme.SaveAppThemeSetting(radioButtons.SelectedItem as string);
+            AppTheme.SetAppTheme(radioButtons.SelectedItem as string);
+        }
+
+        private void InitialUpdateOfThemeSetting()
+        {
+            switch (AppTheme.GetAppThemeSetting())
+            {
+                case "Light":
+                    radioButtons.SelectedIndex = 0;
+                    break;
+
+                case "Dark":
+                    radioButtons.SelectedIndex = 1;
+                    break;
+
+                case "Use system setting":
+                    radioButtons.SelectedIndex = 2;
+                    break;
+            }
+        }
+
+        private async void LauchAddFeedDialog(object sender, object e)
+        {
+            dialogContent = new AddFeedDialogContent();
+            var addFeedDialog = new ContentDialog
+            {
+                Title = "Add new feed source",
+                PrimaryButtonText = "Ok",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                Content = dialogContent
+            };
+            addFeedDialog.Closed += AddFeedDialog_Closed;
+            await addFeedDialog.ShowAsync();
+            dialogContent = null;
+        }
+
+        private void RemoveFeed(object sender, RoutedEventArgs e)
+        {
+            var removeList = listView.SelectedItems.ToList();
+            if (removeList.Count != 0)
+            {
+                foreach (CustomFeed feed in removeList)
+                {
+                    Feeds.Remove(feed);
+                }
+            }
+        }
+
+        private async void SaveFeeds(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SuckAssReader.SaveFeeds(Feeds);
+            }
+            catch (Exception)
+            {
+                ContentDialog savingFeedsErrorDialog = new ContentDialog
+                {
+                    Title = "Error saving changes",
+                    Content = "An error occured while saving changes, please try again",
+                    CloseButtonText = "Ok"
+                };
+                await savingFeedsErrorDialog.ShowAsync();
+            }
+        }
+
+        private void SettingPageContent_Loaded(object sender, RoutedEventArgs e)
+        {
+            ChangeStateOfBackButton(this, true);
+            ChangeStateOfOpenButton(this, false);
+        }
+        private async void UpdateFeeds()
+        {
+            try
+            {
+                foreach (CustomFeed feed in SuckAssReader.GetSavedFeeds())
+                {
+                    if (feed != null)
+                    {
+                        Feeds.Insert(0, feed);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                ContentDialog gettingSavedFeedsErrorDialog = new ContentDialog
+                {
+                    Title = "Error getting saved feeds",
+                    Content = "An error occured while getting saved feeds",
+                    CloseButtonText = "Ok"
+                };
+                await gettingSavedFeedsErrorDialog.ShowAsync();
             }
         }
     }

@@ -13,9 +13,6 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class WebViewPageContent : Page
     {
-        public static event EventHandler CanNotGoBack;
-        public static event EventHandler<bool> ChangeStateOfOpenButton;
-        public static event EventHandler<bool> ChangeStateOfBackButton;
         public WebViewPageContent()
         {
             InitializeComponent();
@@ -27,17 +24,16 @@ namespace SuckAssRSSReader
             MainPage.OpenLinkInBrowser += OpenLinkInBrowser;
         }
 
-        private void WebViewPageContent_Loaded(object sender, RoutedEventArgs e)
+        public static event EventHandler CanNotGoBack;
+
+        public static event EventHandler<bool> ChangeStateOfBackButton;
+
+        public static event EventHandler<bool> ChangeStateOfOpenButton;
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ChangeStateOfBackButton(this, true);
-            ChangeStateOfOpenButton(this, true);
+            webView.Navigate(new Uri((e.Parameter as CustomFeedItem).Link));
         }
 
-        private void WebView_ContentUnloaded(object sender, RoutedEventArgs e)
-        {
-            MainPage.GoBack -= GoBack;
-            MainPage.OpenLinkInBrowser -= OpenLinkInBrowser;
-        }
         private void GoBack(object sender, object e)
         {
             if (webView.CanGoBack)
@@ -49,10 +45,7 @@ namespace SuckAssRSSReader
                 CanNotGoBack(this, null);
             }
         }
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            webView.Navigate(new Uri((e.Parameter as CustomFeedItem).Link));
-        }
+
         private async void OpenLinkInBrowser(object sender, object e)
         {
             if (GetType() == e as Type)
@@ -62,6 +55,18 @@ namespace SuckAssRSSReader
                     await Windows.System.Launcher.LaunchUriAsync(webView.Source);
                 }
             }
+        }
+
+        private void WebView_ContentUnloaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.GoBack -= GoBack;
+            MainPage.OpenLinkInBrowser -= OpenLinkInBrowser;
+        }
+
+        private void WebViewPageContent_Loaded(object sender, RoutedEventArgs e)
+        {
+            ChangeStateOfBackButton(this, true);
+            ChangeStateOfOpenButton(this, true);
         }
     }
 }
