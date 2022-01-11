@@ -10,34 +10,36 @@
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
     NavigationCacheMode="Required">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBlock Text="Home" Margin="60,12,0,0" Style="{ThemeResource TitleTextBlockStyle}" />
-        <ListView x:Name="listView" Grid.Row="1" Margin="60,12,60,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged" ItemsSource="{x:Bind Feeds}">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:CustomFeedItem">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{x:Bind ImageLink}" Width="32" Height="32"  Margin="16,12,12,16" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Text="{x:Bind Title}" Margin="16,12,0,0" Style="{ThemeResource BaseTextBlockStyle}" />
-                        <TextBlock Grid.Column="1" Grid.Row="1" Margin="16,12,0,16" Style="{ThemeResource BodyTextBlockStyle}">
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Home" Margin="60,12,0,0" Style="{ThemeResource TitleTextBlockStyle}" />
+            <ListView x:Name="listView" Grid.Row="1" Margin="60,12,60,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged" ItemsSource="{x:Bind Feeds}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:CustomFeedItem">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{x:Bind ImageLink}" Width="32" Height="32"  Margin="16,12,12,16" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind Title}" Margin="16,12,0,0" Style="{ThemeResource BaseTextBlockStyle}" />
+                            <TextBlock Grid.Column="1" Grid.Row="1" Margin="16,12,0,16" Style="{ThemeResource BodyTextBlockStyle}">
                             <Run Text="{x:Bind Publisher}" />
                             <Run Text=" " />
                             <Run Text="{x:Bind PublishingDateString}" />
-                        </TextBlock>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </Grid>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
 </Page>
