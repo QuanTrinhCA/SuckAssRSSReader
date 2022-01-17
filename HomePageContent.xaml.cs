@@ -1,7 +1,9 @@
-﻿using AppFeedReader;
+﻿using AppFeeds;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -19,26 +21,24 @@ namespace SuckAssRSSReader
     {
         public ObservableCollection<CustomFeedItem> Feeds = new ObservableCollection<CustomFeedItem>();
 
+        public static event EventHandler<bool> ChangeStateOfBackButton;
+
+        public static event EventHandler<bool> ChangeStateOfOpenButton;
+
+        public static event EventHandler<object> ListViewDoubleTapped;
+
         private Timer _timer;
 
         public HomePageContent()
         {
             InitializeComponent();
 
-            Loaded += HomePageContent_Loaded;
+            this.Loaded += SetUpPageAsync;
 
-            MainPage.OpenLinkInBrowser += OpenLinkInBrowser;
-
-            SyncFeeds();
-            SetTimer();
+            MainPage.OpenLinkInBrowser += OpenLinkInBrowserAsync;
         }
 
-        public static event EventHandler<bool> ChangeStateOfBackButton;
-
-        public static event EventHandler<bool> ChangeStateOfOpenButton;
-
-        public static event EventHandler<object> ListViewDoubleTapped;
-        private void HomePageContent_Loaded(object sender, RoutedEventArgs e)
+        private async void SetUpPageAsync(object sender, RoutedEventArgs e)
         {
             ChangeStateOfBackButton(this, false);
             if (listView.SelectedItem == null)
@@ -49,27 +49,13 @@ namespace SuckAssRSSReader
             {
                 ChangeStateOfOpenButton(this, true);
             }
-        }
-
-        private void ListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            ListViewDoubleTapped(this, listView.SelectedItem);
-        }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ChangeStateOfOpenButton(this, true);
-        }
-
-        private async void OpenLinkInBrowser(object sender, object e)
-        {
-            if (GetType() == e as Type)
+            await Task.Run(() =>
             {
-                if (!await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link)))
-                {
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link));
-                }
-            }
+                AppFeeds.Feeds.GetSavedFeeds();
+                GetFeedItemsAsync();
+            });
+
+            SetTimer();
         }
 
         private void SetTimer()
@@ -81,20 +67,44 @@ namespace SuckAssRSSReader
             _timer.AutoReset = true;
             _timer.Enabled = true;
         }
-
-        private async void SyncFeeds()
+        private void Timer_OnTimed(object sender, ElapsedEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            GetFeedItemsAsync();
+        }
+
+        private async void GetFeedItemsAsync()
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
-                foreach (CustomFeedItem feedItem in await SuckAssReader.GetFeedItems(Feeds.ToList()))
+                foreach (CustomFeedItem feedItem in await Task.Run(async () =>
+                {
+                    return await AppFeeds.Feeds.GetFeedItemsAsync(Feeds.ToList());
+                }))
                 {
                     Feeds.Insert(0, feedItem);
                 }
             });
         }
-        private void Timer_OnTimed(object sender, ElapsedEventArgs e)
+
+        private async void OpenLinkInBrowserAsync(object sender, object e)
         {
-            SyncFeeds();
+            if (GetType() == e as Type)
+            {
+                if (!await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link)))
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link));
+                }
+            }
+        }
+
+        private void ListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            ListViewDoubleTapped(this, listView.SelectedItem);
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeStateOfOpenButton(this, true);
         }
     }
 }

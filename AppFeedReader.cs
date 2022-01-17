@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AppFeedReader
+namespace AppFeeds
 {
     public class CustomFeed
     {
@@ -27,11 +27,11 @@ namespace AppFeedReader
         public string Title;
     }
 
-    public class SuckAssReader
+    public class Feeds
     {
         private static List<CustomFeed> s_feeds = new List<CustomFeed>();
 
-        public static async Task<CustomFeed> GetFeed(string inputUrl)
+        public static async Task<CustomFeed> GetFeedAsync(string inputUrl)
         {
             var urls = await FeedReader.GetFeedUrlsFromUrlAsync(inputUrl);
             string feedUrl;
@@ -62,7 +62,7 @@ namespace AppFeedReader
             };
         }
 
-        public static async Task<List<CustomFeedItem>> GetFeedItems(List<CustomFeedItem> oldFeedItems)
+        public static async Task<List<CustomFeedItem>> GetFeedItemsAsync(List<CustomFeedItem> oldFeedItems)
         {
             var newFeedItems = new List<CustomFeedItem>();
             foreach (CustomFeed savedFeed in s_feeds)
@@ -112,8 +112,7 @@ namespace AppFeedReader
                     }
                 }
             }
-            newFeedItems = newFeedItems.OrderBy(x => x.PublishingDate).ToList();
-            return newFeedItems;
+            return newFeedItems.OrderBy(x => x.PublishingDate).ToList();
         }
 
         public static List<CustomFeed> GetSavedFeeds()
@@ -145,13 +144,9 @@ namespace AppFeedReader
             return s_feeds;
         }
 
-        public static void Initialize()
+        public static void SaveFeeds(List<CustomFeed> newfeeds)
         {
-            _ = GetSavedFeeds();
-        }
-        public static void SaveFeeds(ObservableCollection<CustomFeed> newfeeds)
-        {
-            s_feeds = newfeeds.ToList();
+            s_feeds = newfeeds;
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.DeleteContainer("feeds");
             localSettings.CreateContainer("feeds", Windows.Storage.ApplicationDataCreateDisposition.Always);

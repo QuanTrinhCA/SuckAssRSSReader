@@ -1,5 +1,4 @@
-﻿using AppFeedReader;
-using AppSettings;
+﻿using AppSettings;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
@@ -21,10 +20,7 @@ namespace SuckAssRSSReader
 
             InitializeComponent();
 
-            SuckAssReader.Initialize();
-
-            AppTheme.SetAppTheme(AppTheme.GetAppThemeSetting());
-            AppTheme.SetTitleBarTheme(Window.Current.Content as FrameworkElement, null);
+            Theme.SetAppTheme(Theme.GetAppThemeSetting());
 
             HomePageContent.ListViewDoubleTapped += NavigateToWebView;
             HomePageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;

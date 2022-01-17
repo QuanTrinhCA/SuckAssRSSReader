@@ -3,25 +3,23 @@ using Windows.UI.Xaml;
 
 namespace AppSettings
 {
-    public static class AppTheme
+    public static class Theme
     {
         public static string GetAppThemeSetting()
         {
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["theme"] == null)
+            if (Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"] == null)
             {
                 return "Use system setting";
             }
             else
             {
-                return localSettings.Values["theme"].ToString();
+                return Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"].ToString();
             }
         }
 
         public static void SaveAppThemeSetting(string theme)
         {
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.Values["theme"] = theme;
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"] = theme;
         }
 
         public static void SetAppTheme(string theme)
@@ -42,6 +40,7 @@ namespace AppSettings
                     (Window.Current.Content as FrameworkElement).RequestedTheme = ElementTheme.Default;
                     break;
             }
+            SetTitleBarTheme(Window.Current.Content as FrameworkElement, null);
         }
 
         public static void SetTitleBarTheme(FrameworkElement sender, object args)
