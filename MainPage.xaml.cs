@@ -13,36 +13,42 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static event EventHandler WebViewGoBack;
+
+        public static event EventHandler<Type> OpenLinkInBrowser;
+
         public MainPage()
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             CoreApplication.GetCurrentView().TitleBar.LayoutMetricsChanged += TitleBar_LayoutMetricsChanged;
 
-            InitializeComponent();
-
             Theme.SetAppTheme(Theme.GetAppThemeSetting());
+
+            InitializeComponent();
 
             HomePageContent.ListViewDoubleTapped += NavigateToWebView;
             HomePageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
             HomePageContent.ChangeStateOfBackButton += ChangeStateOfBackButton;
 
-            WebViewPageContent.CanNotGoBack += FrameGoBack;
+            WebViewPageContent.WebViewCanNotGoBack += FrameGoBack;
             WebViewPageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
             WebViewPageContent.ChangeStateOfBackButton += ChangeStateOfBackButton;
 
             SettingPageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
             SettingPageContent.ChangeStateOfBackButton += ChangeStateOfBackButton;
 
-            backButton.Click += FireGoBackEvent;
-            openButton.Click += FireOpenLinkInBrowserEvent;
+            backButton.Click += GoBack;
+            openButton.Click += OpenLink;
             settingButton.Click += NavigateToSetting;
 
             NavigateToHome();
         }
 
-        public static event EventHandler GoBack;
+        private void TitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            appTitleTextBlock.Height = sender.Height;
+        }
 
-        public static event EventHandler<object> OpenLinkInBrowser;
         private void ChangeStateOfBackButton(object sender, bool e)
         {
             if (e)
@@ -67,28 +73,6 @@ namespace SuckAssRSSReader
             }
         }
 
-        private void FireGoBackEvent(object sender, RoutedEventArgs e)
-        {
-            if (frame.Content.GetType() == typeof(WebViewPageContent))
-            {
-                GoBack(this, null);
-            }
-            else if (frame.Content.GetType() == typeof(SettingPageContent))
-            {
-                FrameGoBack(this, null);
-            }
-        }
-
-        private void FireOpenLinkInBrowserEvent(object sender, RoutedEventArgs e)
-        {
-            OpenLinkInBrowser(this, frame.Content.GetType());
-        }
-
-        private void FrameGoBack(object sender, object e)
-        {
-            frame.GoBack();
-        }
-
         private void NavigateToHome()
         {
             frame.Navigate(typeof(HomePageContent));
@@ -107,9 +91,26 @@ namespace SuckAssRSSReader
             frame.Navigate(typeof(WebViewPageContent), e);
         }
 
-        private void TitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void GoBack(object sender, RoutedEventArgs e)
         {
-            appTitleTextBlock.Height = sender.Height;
+            if (frame.Content.GetType() == typeof(WebViewPageContent))
+            {
+                WebViewGoBack(this, null);
+            }
+            else if (frame.Content.GetType() == typeof(SettingPageContent))
+            {
+                FrameGoBack(this, null);
+            }
+        }
+
+        private void FrameGoBack(object sender, object e)
+        {
+            frame.GoBack();
+        }
+
+        private void OpenLink(object sender, RoutedEventArgs e)
+        {
+            OpenLinkInBrowser(this, frame.Content.GetType());
         }
     }
 }

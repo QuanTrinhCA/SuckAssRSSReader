@@ -1,6 +1,5 @@
 ﻿using AppFeeds;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -151,7 +150,6 @@ namespace SuckAssRSSReader
                     await Task.Run(async () =>
                     {
                         newFeed = await AppFeeds.Feeds.GetFeedAsync(feedUrl);
-                        
                     });
                     dialogContent = null;
                 }

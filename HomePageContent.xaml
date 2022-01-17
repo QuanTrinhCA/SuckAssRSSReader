@@ -17,7 +17,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <TextBlock Text="Home" Margin="60,12,0,0" Style="{ThemeResource TitleTextBlockStyle}" />
-            <ListView x:Name="listView" Grid.Row="1" Margin="60,12,60,0" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped" SelectionChanged="ListView_SelectionChanged" ItemsSource="{x:Bind Feeds}">
+            <ListView x:Name="listView" Grid.Row="1" Margin="60,12,60,0" IsDoubleTapEnabled="True" ItemsSource="{x:Bind FeedItems}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:CustomFeedItem">
                         <Grid>
