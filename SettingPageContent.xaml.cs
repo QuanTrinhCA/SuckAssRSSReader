@@ -147,11 +147,13 @@ namespace SuckAssRSSReader
                 bool newFeedIsValid = true;
                 try
                 {
+                    string feedUrl = dialogContent.GetFeedUrl();
                     await Task.Run(async () =>
                     {
-                        newFeed = await AppFeeds.Feeds.GetFeedAsync(dialogContent.GetFeedUrl());
-                        dialogContent = null;
+                        newFeed = await AppFeeds.Feeds.GetFeedAsync(feedUrl);
+                        
                     });
+                    dialogContent = null;
                 }
                 catch (Exception)
                 {
