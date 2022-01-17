@@ -1,6 +1,5 @@
 ﻿using AppFeeds;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,10 +26,10 @@ namespace SuckAssRSSReader
             InitializeComponent();
 
             this.Loaded += SetUpPage;
-            removeButton.Click += RemoveFeeds;
+            removeButton.Click += RemoveFeedsAsync;
             addButton.Click += LauchAddFeedDialogAsync;
             acceptButton.Click += SaveFeedsAsync;
-            radioButtons.SelectionChanged += ChangeTheme;
+            radioButtons.SelectionChanged += ChangeThemeAsync;
         }
 
         private void SetUpPage(object sender, RoutedEventArgs e)
@@ -38,31 +37,55 @@ namespace SuckAssRSSReader
             ChangeStateOfBackButton(this, true);
             ChangeStateOfOpenButton(this, false);
 
-            UpdateThemeSettingRadioButtons();
+            UpdateThemeSettingRadioButtonsAsync();
             UpdateFeedsAsync();
         }
 
-        private void ChangeTheme(object sender, SelectionChangedEventArgs e)
+        private async void ChangeThemeAsync(object sender, SelectionChangedEventArgs e)
         {
-            AppSettings.Theme.SaveAppThemeSetting(radioButtons.SelectedItem as string);
-            AppSettings.Theme.SetAppTheme(radioButtons.SelectedItem as string);
+            try
+            {
+                AppSettings.Theme.SaveAppThemeSetting(radioButtons.SelectedItem as string);
+                AppSettings.Theme.SetAppTheme(radioButtons.SelectedItem as string);
+            }
+            catch (Exception)
+            {
+                await new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "An error occured while saving app theme",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+            }
         }
 
-        private void UpdateThemeSettingRadioButtons()
+        private async void UpdateThemeSettingRadioButtonsAsync()
         {
-            switch (AppSettings.Theme.GetAppThemeSetting())
+            try
             {
-                case "Light":
-                    radioButtons.SelectedIndex = 0;
-                    break;
+                switch (AppSettings.Theme.GetAppThemeSetting())
+                {
+                    case "Light":
+                        radioButtons.SelectedIndex = 0;
+                        break;
 
-                case "Dark":
-                    radioButtons.SelectedIndex = 1;
-                    break;
+                    case "Dark":
+                        radioButtons.SelectedIndex = 1;
+                        break;
 
-                case "Use system setting":
-                    radioButtons.SelectedIndex = 2;
-                    break;
+                    case "Use system setting":
+                        radioButtons.SelectedIndex = 2;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                await new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "An error occured while getting app theme",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
             }
         }
 
@@ -82,22 +105,34 @@ namespace SuckAssRSSReader
             {
                 await new ContentDialog
                 {
-                    Title = "Error getting saved feeds",
+                    Title = "Error",
                     Content = "An error occured while getting saved feeds",
                     CloseButtonText = "Ok"
                 }.ShowAsync();
             }
         }
 
-        private void RemoveFeeds(object sender, RoutedEventArgs e)
+        private async void RemoveFeedsAsync(object sender, RoutedEventArgs e)
         {
-            var removeList = listView.SelectedItems.ToList();
-            if (removeList.Count != 0)
+            try
             {
-                foreach (CustomFeed feed in removeList)
+                var removeList = listView.SelectedItems.ToList();
+                if (removeList.Count != 0)
                 {
-                    Feeds.Remove(feed);
+                    foreach (CustomFeed feed in removeList)
+                    {
+                        Feeds.Remove(feed);
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                await new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "An error occured while removing feeds",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
             }
         }
 
@@ -114,8 +149,8 @@ namespace SuckAssRSSReader
             {
                 await new ContentDialog
                 {
-                    Title = "Error saving changes",
-                    Content = "An error occured while saving changes, please try again",
+                    Title = "Error",
+                    Content = "An error occured while saving changes",
                     CloseButtonText = "Ok"
                 }.ShowAsync();
             }
@@ -151,23 +186,40 @@ namespace SuckAssRSSReader
                     await Task.Run(async () =>
                     {
                         newFeed = await AppFeeds.Feeds.GetFeedAsync(feedUrl);
-                        
                     });
                     dialogContent = null;
                 }
                 catch (Exception)
                 {
                     newFeedIsValid = false;
-                    await new ContentDialog
-                    {
-                        Title = "Error adding new feed",
-                        Content = "An error occured while adding the feed, please check the URL again",
-                        CloseButtonText = "Ok"
-                    }.ShowAsync();
                 }
                 if (Feeds.Where(x => x.Link == newFeed.Link).Count() == 0 && newFeedIsValid)
                 {
                     Feeds.Add(newFeed);
+                    await new ContentDialog
+                    {
+                        Title = "Successful",
+                        Content = "The feed has been successfully added",
+                        CloseButtonText = "Ok"
+                    }.ShowAsync();
+                }
+                else if (Feeds.Where(x => x.Link == newFeed.Link).Count() != 0 && newFeedIsValid)
+                {
+                    await new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "The feed has been already added",
+                        CloseButtonText = "Ok"
+                    }.ShowAsync();
+                }
+                else
+                {
+                    await new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "An error occured while adding the feed, please check the URL again",
+                        CloseButtonText = "Ok"
+                    }.ShowAsync();
                 }
             }
         }

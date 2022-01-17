@@ -1,6 +1,5 @@
 ﻿using AppFeeds;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class HomePageContent : Page
     {
-        public ObservableCollection<CustomFeedItem> Feeds = new ObservableCollection<CustomFeedItem>();
+        public ObservableCollection<CustomFeedItem> FeedItems = new ObservableCollection<CustomFeedItem>();
 
         public static event EventHandler<bool> ChangeStateOfBackButton;
 
@@ -31,11 +30,14 @@ namespace SuckAssRSSReader
 
         public HomePageContent()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.Loaded += SetUpPageAsync;
 
             MainPage.OpenLinkInBrowser += OpenLinkInBrowserAsync;
+
+            listView.DoubleTapped += ListView_DoubleTapped;
+            listView.SelectionChanged += ListView_SelectionChanged;
         }
 
         private async void SetUpPageAsync(object sender, RoutedEventArgs e)
@@ -67,6 +69,7 @@ namespace SuckAssRSSReader
             _timer.AutoReset = true;
             _timer.Enabled = true;
         }
+
         private void Timer_OnTimed(object sender, ElapsedEventArgs e)
         {
             GetFeedItemsAsync();
@@ -76,19 +79,16 @@ namespace SuckAssRSSReader
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
-                foreach (CustomFeedItem feedItem in await Task.Run(async () =>
+                foreach (CustomFeedItem feedItem in await Task.Run(async () => { return await AppFeeds.Feeds.GetFeedItemsAsync(FeedItems.ToList()); }))
                 {
-                    return await AppFeeds.Feeds.GetFeedItemsAsync(Feeds.ToList());
-                }))
-                {
-                    Feeds.Insert(0, feedItem);
+                    FeedItems.Insert(0, feedItem);
                 }
             });
         }
 
-        private async void OpenLinkInBrowserAsync(object sender, object e)
+        private async void OpenLinkInBrowserAsync(object sender, Type e)
         {
-            if (GetType() == e as Type)
+            if (GetType() == e)
             {
                 if (!await Windows.System.Launcher.LaunchUriAsync(new Uri((listView.SelectedItem as CustomFeedItem).Link)))
                 {

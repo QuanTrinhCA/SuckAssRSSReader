@@ -10,22 +10,11 @@
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <ScrollViewer>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock Text="Setting" Margin="60,12,0,0" Style="{ThemeResource TitleTextBlockStyle}" />
-            <TextBlock Text="General" Grid.Row="1" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}" />
-            <muxc:Expander Header="Feeds" Grid.Row="2" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
-                <Grid Margin="32,-16,32,-10">
+        <StackPanel>
+            <TextBlock Text="Setting" Margin="60,12,60,0" Style="{ThemeResource TitleTextBlockStyle}" />
+            <TextBlock Text="General" Margin="60,12,60,0" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <muxc:Expander Header="Feeds" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -37,10 +26,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <AppBarButton x:Name="removeButton" Icon="Remove" LabelPosition="Collapsed" Label="Remove" HorizontalAlignment="Right" Grid.Column="2" />
-                    <AppBarButton x:Name="addButton" Icon="Add" LabelPosition="Collapsed" Label="Add" HorizontalAlignment="Right" Grid.Column="3" />
-                    <AppBarButton x:Name="acceptButton" Icon="Accept" LabelPosition="Collapsed" Label="Accept" HorizontalAlignment="Right" Grid.Column="4" />
-                    <ListView x:Name="listView" SelectionMode="Extended" ItemsSource="{x:Bind Feeds}" Grid.Row="1" Grid.ColumnSpan="5">
+                    <AppBarButton x:Name="removeButton" Icon="Remove" LabelPosition="Collapsed" Label="Remove" HorizontalAlignment="Right" Grid.Column="2" Margin="0,-16,8,-10" />
+                    <AppBarButton x:Name="addButton" Icon="Add" LabelPosition="Collapsed" Label="Add" HorizontalAlignment="Right" Grid.Column="3" Margin="0,-16,8,-10" />
+                    <AppBarButton x:Name="acceptButton" Icon="Accept" LabelPosition="Collapsed" Label="Accept" HorizontalAlignment="Right" Grid.Column="4" Margin="0,-16,32,-10" />
+                    <ListView x:Name="listView" SelectionMode="Extended" ItemsSource="{x:Bind Feeds}" Grid.Row="1" Grid.ColumnSpan="5" Margin="0,8,0,-10" >
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local:CustomFeed">
                                 <Grid>
@@ -61,16 +50,16 @@
                     </ListView>
                 </Grid>
             </muxc:Expander>
-            <TextBlock Text="Personalisation" Grid.Row="3" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}" />
-            <muxc:Expander Header="Theme mode" Grid.Row="4" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <TextBlock Text="Personalisation" Margin="60,12,60,0" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <muxc:Expander Header="Theme mode" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <muxc:RadioButtons x:Name="radioButtons" Margin="32,-16,32,-7">
                     <x:String>Light</x:String>
                     <x:String>Dark</x:String>
                     <x:String>Use system setting</x:String>
                 </muxc:RadioButtons>
             </muxc:Expander>
-            <TextBlock Text="About Suck Ass RSS Reader" Grid.Row="5" Margin="60,12,0,0" Style="{ThemeResource SubtitleTextBlockStyle}" />
-            <muxc:Expander Header="Description" Grid.Row="6" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <TextBlock Text="About Suck Ass RSS Reader" Margin="60,12,60,0" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <muxc:Expander Header="Description" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <RichTextBlock Margin="32,-4,32,0">
                     <Paragraph>
                         This is a RSS feed reader made in uwp as a challenge I set out for myself :)
@@ -79,7 +68,7 @@
                     </Paragraph>
                 </RichTextBlock>
             </muxc:Expander>
-            <muxc:Expander Header="Dependencies" Grid.Row="7" Margin="60,8,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <muxc:Expander Header="Dependencies" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <RichTextBlock Margin="32,-4,32,0">
                     <Paragraph>
                         <Hyperlink NavigateUri="https://github.com/arminreiter/FeedReader">CodeHollow's FeedReader</Hyperlink> - Open-source C# library used to read feeds
@@ -88,7 +77,7 @@
                     </Paragraph>
                 </RichTextBlock>
             </muxc:Expander>
-            <muxc:Expander Header="License" Grid.Row="8" Margin="60,8,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <muxc:Expander Header="License" Margin="60,12,60,0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <RichTextBlock Margin="32,-4,32,0">
                     <Paragraph>
                         MIT License
@@ -123,6 +112,6 @@
                     </Paragraph>
                 </RichTextBlock>
             </muxc:Expander>
-        </Grid>
+        </StackPanel>
     </ScrollViewer>
 </Page>
