@@ -52,9 +52,9 @@ namespace AppSettings
                     titleBar.ButtonForegroundColor = Windows.UI.Colors.Black;
                     titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
                     titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
-                    titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(205, 0, 0, 0);
+                    titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(195, 0, 0, 0);
                     titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.LightGray;
-                    titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(210, 0, 0, 0);
+                    titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(188, 0, 0, 0);
 
                     titleBar.ButtonInactiveForegroundColor = Windows.UI.Colors.Gray;
                     titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
@@ -66,7 +66,7 @@ namespace AppSettings
                     titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
                     titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(15, 255, 255, 255);
                     titleBar.ButtonPressedForegroundColor = Windows.UI.Colors.LightGray;
-                    titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(10, 255, 255, 255);
+                    titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(08, 255, 255, 255);
 
                     titleBar.ButtonInactiveForegroundColor = Windows.UI.Colors.Gray;
                     titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;

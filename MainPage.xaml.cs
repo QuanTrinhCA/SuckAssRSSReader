@@ -1,8 +1,11 @@
 ﻿using AppSettings;
 using System;
+using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -21,6 +24,8 @@ namespace SuckAssRSSReader
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             CoreApplication.GetCurrentView().TitleBar.LayoutMetricsChanged += TitleBar_LayoutMetricsChanged;
+
+            Window.Current.Activated += Current_Activated;
 
             Theme.SetAppTheme(Theme.GetAppThemeSetting());
 
@@ -42,6 +47,18 @@ namespace SuckAssRSSReader
             settingButton.Click += NavigateToSetting;
 
             NavigateToHome();
+        }
+
+        private void Current_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState == CoreWindowActivationState.Deactivated)
+            {
+                appTitleTextBlock.Foreground = new SolidColorBrush(Colors.Gray);
+            }
+            else
+            {
+                appTitleTextBlock.ClearValue(TextBox.ForegroundProperty);
+            }
         }
 
         private void TitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
