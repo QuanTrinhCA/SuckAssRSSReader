@@ -18,14 +18,10 @@
         <CommandBar OverflowButtonVisibility="Collapsed" IsDynamicOverflowEnabled="False" Grid.Row="1">
             <AppBarButton x:Name="settingButton" Icon="Setting" Label="Setting" LabelPosition="Collapsed" />
             <CommandBar.Content>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
                     <AppBarButton x:Name="backButton" Icon="Back" Label="Back" LabelPosition="Collapsed" />
-                    <AppBarButton x:Name="openButton" Icon="NewWindow" Label="Open With Default Browser" LabelPosition="Collapsed" Grid.Column="1" />
-                </Grid>
+                    <AppBarButton x:Name="openButton" Icon="NewWindow" Label="Open With Default Browser" LabelPosition="Collapsed" />
+                </StackPanel>
             </CommandBar.Content>
         </CommandBar>
         <Frame x:Name="frame" Grid.Row="2" />
