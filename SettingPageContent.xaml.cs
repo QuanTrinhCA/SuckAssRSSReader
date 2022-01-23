@@ -23,7 +23,7 @@ namespace SuckAssRSSReader
 
         public static event EventHandler<bool> ChangeStateOfOpenButton;
 
-        private static bool s_isFirstThemeSettingUIUpdate = true;
+        private static bool s_isFirstThemeSettingUIUpdate;
 
         public SettingPageContent()
         {
@@ -41,8 +41,11 @@ namespace SuckAssRSSReader
             ChangeStateOfBackButton(this, true);
             ChangeStateOfOpenButton(this, false);
 
+            s_isFirstThemeSettingUIUpdate = true;
             UpdateThemeSettingRadioButtonsAsync();
+
             UpdateFeedsAsync();
+
             GC.Collect(1);
         }
 
