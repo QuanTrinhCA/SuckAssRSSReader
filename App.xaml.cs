@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Services;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -10,7 +11,7 @@ namespace SuckAssRSSReader
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    internal sealed partial class App : Application
     {
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -20,6 +21,8 @@ namespace SuckAssRSSReader
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            Theme.SetAppTheme(Theme.GetAppThemeSetting());
         }
 
         /// <summary>
@@ -61,6 +64,14 @@ namespace SuckAssRSSReader
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            Theme.SetTitleBarTheme(rootFrame.ActualTheme);
+            rootFrame.ActualThemeChanged += RootFrame_ActualThemeChanged;
+        }
+
+        private void RootFrame_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            Theme.SetTitleBarTheme(sender.ActualTheme);
         }
 
         /// <summary>
@@ -68,7 +79,7 @@ namespace SuckAssRSSReader
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }

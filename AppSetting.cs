@@ -1,52 +1,46 @@
-﻿using Windows.UI.ViewManagement;
+﻿using SuckAssRSSReader;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
-namespace AppSettings
+namespace Services
 {
     public static class Theme
     {
-        public static string GetAppThemeSetting()
+        public static ElementTheme GetAppThemeSetting()
         {
-            if (Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"] == null)
+            if (Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"] != null)
             {
-                return "Use system setting";
+                return (ElementTheme)Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"];
             }
             else
             {
-                return Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"].ToString();
+                return ElementTheme.Default;
             }
         }
 
-        public static void SaveAppThemeSetting(string theme)
+        public static void SaveAppThemeSetting(ElementTheme theme)
         {
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"] = theme;
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values["theme"] = (int)theme;
         }
 
-        public static void SetAppTheme(string theme)
+        public static void SetAppTheme(ElementTheme theme)
         {
-            (Window.Current.Content as FrameworkElement).ActualThemeChanged -= SetTitleBarTheme;
-            (Window.Current.Content as FrameworkElement).ActualThemeChanged += SetTitleBarTheme;
             switch (theme)
             {
-                case "Light":
-                    (Window.Current.Content as FrameworkElement).RequestedTheme = ElementTheme.Light;
+                case ElementTheme.Light:
+                    Application.Current.RequestedTheme = ApplicationTheme.Light;
                     break;
 
-                case "Dark":
-                    (Window.Current.Content as FrameworkElement).RequestedTheme = ElementTheme.Dark;
-                    break;
-
-                case "Use system setting":
-                    (Window.Current.Content as FrameworkElement).RequestedTheme = ElementTheme.Default;
+                case ElementTheme.Dark:
+                    Application.Current.RequestedTheme = ApplicationTheme.Dark;
                     break;
             }
-            SetTitleBarTheme(Window.Current.Content as FrameworkElement, null);
         }
 
-        public static void SetTitleBarTheme(FrameworkElement sender, object args)
+        public static void SetTitleBarTheme(ElementTheme theme)
         {
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            switch (sender.ActualTheme)
+            switch (theme)
             {
                 case ElementTheme.Light:
                     titleBar.ButtonForegroundColor = Windows.UI.Colors.Black;

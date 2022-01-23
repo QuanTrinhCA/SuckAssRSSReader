@@ -33,6 +33,7 @@ namespace SuckAssRSSReader
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             webView.Navigate(new Uri((e.Parameter as CustomFeedItem).Link));
+            GC.Collect(1);
         }
 
         private void SetupPage(object sender, RoutedEventArgs e)

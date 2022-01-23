@@ -1,8 +1,7 @@
-﻿using AppSettings;
-using System;
-using Windows.UI.Core;
+﻿using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -22,14 +21,12 @@ namespace SuckAssRSSReader
 
         public MainPage()
         {
+            InitializeComponent();
+
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             CoreApplication.GetCurrentView().TitleBar.LayoutMetricsChanged += TitleBar_LayoutMetricsChanged;
 
-            Window.Current.Activated += Current_Activated;
-
-            Theme.SetAppTheme(Theme.GetAppThemeSetting());
-
-            InitializeComponent();
+            Window.Current.Activated += App_Activated;
 
             HomePageContent.ListViewDoubleTapped += NavigateToWebView;
             HomePageContent.ChangeStateOfOpenButton += ChangeStateOfOpenButton;
@@ -49,7 +46,7 @@ namespace SuckAssRSSReader
             NavigateToHome();
         }
 
-        private void Current_Activated(object sender, WindowActivatedEventArgs e)
+        private void App_Activated(object sender, WindowActivatedEventArgs e)
         {
             if (e.WindowActivationState == CoreWindowActivationState.Deactivated)
             {
@@ -57,7 +54,7 @@ namespace SuckAssRSSReader
             }
             else
             {
-                appTitleTextBlock.ClearValue(TextBox.ForegroundProperty);
+                appTitleTextBlock.ClearValue(ForegroundProperty);
             }
         }
 

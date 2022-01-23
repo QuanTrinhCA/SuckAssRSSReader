@@ -30,9 +30,9 @@ namespace SuckAssRSSReader
 
         public HomePageContent()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.Loaded += SetUpPageAsync;
+            Loaded += SetUpPageAsync;
 
             MainPage.OpenLinkInBrowser += OpenLinkInBrowserAsync;
 
@@ -53,11 +53,12 @@ namespace SuckAssRSSReader
             }
             await Task.Run(() =>
             {
-                AppFeeds.Feeds.GetSavedFeeds();
+                Feeds.GetSavedFeeds();
                 GetFeedItemsAsync();
             });
 
             SetTimer();
+            GC.Collect(1);
         }
 
         private void SetTimer()
@@ -84,6 +85,7 @@ namespace SuckAssRSSReader
                     FeedItems.Insert(0, feedItem);
                 }
             });
+            GC.Collect(1);
         }
 
         private async void OpenLinkInBrowserAsync(object sender, Type e)

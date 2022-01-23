@@ -1,8 +1,10 @@
 ﻿using AppFeeds;
+using Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -21,6 +23,8 @@ namespace SuckAssRSSReader
 
         public static event EventHandler<bool> ChangeStateOfOpenButton;
 
+        private static bool s_isFirstThemeSettingUIUpdate = true;
+
         public SettingPageContent()
         {
             InitializeComponent();
@@ -29,7 +33,7 @@ namespace SuckAssRSSReader
             removeButton.Click += RemoveFeedsAsync;
             addButton.Click += LauchAddFeedDialogAsync;
             acceptButton.Click += SaveFeedsAsync;
-            radioButtons.SelectionChanged += ChangeThemeAsync;
+            radioButtons.SelectionChanged += SaveAppThemeSettingAsync;
         }
 
         private void SetUpPage(object sender, RoutedEventArgs e)
@@ -39,23 +43,55 @@ namespace SuckAssRSSReader
 
             UpdateThemeSettingRadioButtonsAsync();
             UpdateFeedsAsync();
+            GC.Collect(1);
         }
 
-        private async void ChangeThemeAsync(object sender, SelectionChangedEventArgs e)
+        private async void SaveAppThemeSettingAsync(object sender, SelectionChangedEventArgs e)
         {
-            try
+            if (s_isFirstThemeSettingUIUpdate)
             {
-                AppSettings.Theme.SaveAppThemeSetting(radioButtons.SelectedItem as string);
-                AppSettings.Theme.SetAppTheme(radioButtons.SelectedItem as string);
+                s_isFirstThemeSettingUIUpdate = false;
             }
-            catch (Exception)
+            else if (radioButtons.SelectedItem != null)
             {
-                await new ContentDialog
+                ElementTheme selectedTheme = ElementTheme.Default;
+                switch (radioButtons.SelectedItem.ToString())
                 {
-                    Title = "Error",
-                    Content = "An error occured while saving app theme",
-                    CloseButtonText = "Ok"
-                }.ShowAsync();
+                    case "Light":
+                        selectedTheme = ElementTheme.Light;
+                        break;
+
+                    case "Dark":
+                        selectedTheme = ElementTheme.Dark;
+                        break;
+
+                    case "Use system setting":
+                        selectedTheme = ElementTheme.Default;
+                        break;
+                }
+                try
+                {
+                    Theme.SaveAppThemeSetting(selectedTheme);
+                }
+                catch (Exception)
+                {
+                    await new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "An error occured while saving app theme",
+                        CloseButtonText = "Ok"
+                    }.ShowAsync();
+                }
+                if (await new ContentDialog
+                {
+                    Title = "Success",
+                    Content = "App theme has been successfully changed, please restart to see the changes",
+                    PrimaryButtonText = "Restart",
+                    CloseButtonText = "Cancel"
+                }.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await CoreApplication.RequestRestartAsync("");
+                }
             }
         }
 
@@ -63,17 +99,17 @@ namespace SuckAssRSSReader
         {
             try
             {
-                switch (AppSettings.Theme.GetAppThemeSetting())
+                switch (Theme.GetAppThemeSetting())
                 {
-                    case "Light":
+                    case ElementTheme.Light:
                         radioButtons.SelectedIndex = 0;
                         break;
 
-                    case "Dark":
+                    case ElementTheme.Dark:
                         radioButtons.SelectedIndex = 1;
                         break;
 
-                    case "Use system setting":
+                    case ElementTheme.Default:
                         radioButtons.SelectedIndex = 2;
                         break;
                 }
@@ -198,7 +234,7 @@ namespace SuckAssRSSReader
                     Feeds.Add(newFeed);
                     await new ContentDialog
                     {
-                        Title = "Successful",
+                        Title = "Success",
                         Content = "The feed has been successfully added",
                         CloseButtonText = "Ok"
                     }.ShowAsync();
@@ -222,6 +258,7 @@ namespace SuckAssRSSReader
                     }.ShowAsync();
                 }
             }
+            GC.Collect(1);
         }
     }
 }
