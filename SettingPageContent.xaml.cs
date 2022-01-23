@@ -1,4 +1,4 @@
-﻿using AppFeeds;
+﻿using CustomObjects;
 using Services;
 using System;
 using System.Collections.ObjectModel;
@@ -132,7 +132,7 @@ namespace SuckAssRSSReader
         {
             try
             {
-                foreach (CustomFeed feed in await Task.Run(() => { return AppFeeds.Feeds.GetSavedFeeds(); }))
+                foreach (CustomFeed feed in await Task.Run(() => { return Services.Feeds.GetSavedFeeds(); }))
                 {
                     if (feed != null)
                     {
@@ -181,7 +181,7 @@ namespace SuckAssRSSReader
             {
                 await Task.Run(() =>
                 {
-                    AppFeeds.Feeds.SaveFeeds(Feeds.ToList());
+                    Services.Feeds.SaveFeeds(Feeds.ToList());
                 });
             }
             catch (Exception)
@@ -224,7 +224,7 @@ namespace SuckAssRSSReader
                     string feedUrl = dialogContent.GetFeedUrl();
                     await Task.Run(async () =>
                     {
-                        newFeed = await AppFeeds.Feeds.GetFeedAsync(feedUrl);
+                        newFeed = await Services.Feeds.GetFeedAsync(feedUrl);
                     });
                     dialogContent = null;
                 }

@@ -125,7 +125,7 @@
     <Compile Include="SettingPageContent.xaml.cs">
       <DependentUpon>SettingPageContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AppSetting.cs" />
+    <Compile Include="Services.cs" />
     <Compile Include="WebViewPageContent.xaml.cs">
       <DependentUpon>WebViewPageContent.xaml</DependentUpon>
     </Compile>
@@ -136,7 +136,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AppFeedReader.cs" />
+    <Compile Include="CustomObjects.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

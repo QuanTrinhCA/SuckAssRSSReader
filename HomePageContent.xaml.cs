@@ -1,4 +1,5 @@
-﻿using AppFeeds;
+﻿using CustomObjects;
+using Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -18,13 +19,13 @@ namespace SuckAssRSSReader
     /// </summary>
     public sealed partial class HomePageContent : Page
     {
-        public ObservableCollection<CustomFeedItem> FeedItems = new ObservableCollection<CustomFeedItem>();
-
         public static event EventHandler<bool> ChangeStateOfBackButton;
 
         public static event EventHandler<bool> ChangeStateOfOpenButton;
 
         public static event EventHandler<object> ListViewDoubleTapped;
+
+        public ObservableCollection<CustomFeedItem> FeedItems;
 
         private Timer _timer;
 
@@ -38,6 +39,8 @@ namespace SuckAssRSSReader
 
             listView.DoubleTapped += ListView_DoubleTapped;
             listView.SelectionChanged += ListView_SelectionChanged;
+
+            FeedItems = new ObservableCollection<CustomFeedItem>();
         }
 
         private async void SetUpPageAsync(object sender, RoutedEventArgs e)
@@ -58,20 +61,22 @@ namespace SuckAssRSSReader
             });
 
             SetTimer();
+
             GC.Collect(1);
         }
 
         private void SetTimer()
         {
-            // Create a timer with a two second interval.
-            _timer = new Timer(10000);
-            // Hook up the Elapsed event for the timer.
-            _timer.Elapsed += Timer_OnTimed;
-            _timer.AutoReset = true;
-            _timer.Enabled = true;
+            _timer = new Timer
+            {
+                Interval = Sync.GetSyncInterval(),
+                AutoReset = true,
+                Enabled = true
+            };
+            _timer.Elapsed += Timer_Elapsed;
         }
 
-        private void Timer_OnTimed(object sender, ElapsedEventArgs e)
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             GetFeedItemsAsync();
         }
@@ -80,7 +85,7 @@ namespace SuckAssRSSReader
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
-                foreach (CustomFeedItem feedItem in await Task.Run(async () => { return await AppFeeds.Feeds.GetFeedItemsAsync(FeedItems.ToList()); }))
+                foreach (CustomFeedItem feedItem in await Task.Run(async () => { return await Feeds.GetFeedItemsAsync(FeedItems.ToList()); }))
                 {
                     FeedItems.Insert(0, feedItem);
                 }

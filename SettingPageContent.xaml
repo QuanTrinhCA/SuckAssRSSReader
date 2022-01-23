@@ -4,7 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:AppFeeds"
+    xmlns:local="using:CustomObjects"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
 
@@ -45,9 +45,9 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <Image Source="{x:Bind ImageLink}" Width="32" Height="32"  Margin="16,12,12,16" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind Title}" Margin="16,12,0,0" Style="{ThemeResource BaseTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind Description}" Margin="16,12,0,16" Style="{ThemeResource BodyTextBlockStyle}" />
+                                        <Image Source="{x:Bind ImageLink}" Width="48" Height="48" Margin="4,4,0,4" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Fill" />
+                                        <TextBlock Grid.Column="1" Text="{x:Bind Title}" Margin="16,16,16,0" Style="{ThemeResource BaseTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind Description}" Margin="16,12,16,16" Style="{ThemeResource BodyTextBlockStyle}" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
